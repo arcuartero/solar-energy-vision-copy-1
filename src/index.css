@@ -43,6 +43,7 @@ All colors MUST be HSL.
     --chart-production: 120 70% 45%;
     --chart-consumption: 30 90% 55%;
     --chart-charging: 345 70% 40%;
+    --chart-bordeaux: 345 65% 45%;
     
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-card: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
@@ -98,6 +99,7 @@ All colors MUST be HSL.
     --chart-production: 120 70% 50%;
     --chart-consumption: 30 90% 60%;
     --chart-charging: 345 70% 45%;
+    --chart-bordeaux: 345 70% 50%;
     
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
