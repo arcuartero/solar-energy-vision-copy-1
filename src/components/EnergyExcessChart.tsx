@@ -11,10 +11,11 @@ import type { EnergyData } from "@/utils/energyData";
 
 interface EnergyExcessChartProps {
   data: EnergyData;
+  showPublicCharging: boolean;
+  setShowPublicCharging: (value: boolean) => void;
 }
 
-export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
-  const [showPublicCharging, setShowPublicCharging] = useState(true);
+export const EnergyExcessChart = ({ data, showPublicCharging, setShowPublicCharging }: EnergyExcessChartProps) => {
 
   return (
     <div className="space-y-4">
