@@ -61,16 +61,21 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
             <Bar
               dataKey="netEnergy"
               fill="hsl(var(--primary))"
-              radius={[4, 4, 0, 0]}
               shape={(props: any) => {
-                const { fill, x, y, width, height, netEnergy } = props;
-                const barFill = netEnergy < 0 ? "hsl(var(--destructive))" : fill;
+                const { fill, x, y, width, height, payload } = props;
+                const value = payload.netEnergy;
+                const barFill = value < 0 ? "hsl(var(--destructive))" : fill;
+                
+                // For negative values, bars should extend downward from zero
+                // For positive values, bars should extend upward from zero
+                const radius = value >= 0 ? [4, 4, 0, 0] : [0, 0, 4, 4];
+                
                 return (
                   <rect
                     x={x}
                     y={y}
                     width={width}
-                    height={height}
+                    height={Math.abs(height)}
                     fill={barFill}
                     rx={4}
                     ry={4}
