@@ -6,20 +6,14 @@ import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import type { EnergyData } from "@/utils/energyData";
 
-// Sample data - in real app, this would come from API
-const generateData = () => {
-  const hours = Array.from({ length: 24 }, (_, i) => i);
-  return hours.map((hour) => ({
-    time: `${hour.toString().padStart(2, "0")}:00`,
-    excessProduction: Math.random() > 0.5 ? Math.random() * 5 + 2 : 0,
-    excessConsumption: Math.random() > 0.5 ? -(Math.random() * 4 + 1) : 0,
-  }));
-};
+interface EnergyExcessChartProps {
+  data: EnergyData;
+}
 
-export const EnergyExcessChart = () => {
+export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
   const [date, setDate] = useState<Date>(new Date());
-  const data = generateData();
 
   return (
     <div className="space-y-4">
@@ -89,11 +83,11 @@ export const EnergyExcessChart = () => {
       <div className="flex items-center justify-center gap-6 text-sm">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-primary" />
-          <span className="text-muted-foreground">Excess Production</span>
+          <span className="text-muted-foreground">Excess Production (charges battery)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-chart-separator" />
-          <span className="text-muted-foreground">Excess Consumption</span>
+          <span className="text-muted-foreground">Excess Consumption (drains battery)</span>
         </div>
       </div>
     </div>

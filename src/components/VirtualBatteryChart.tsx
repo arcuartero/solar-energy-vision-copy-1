@@ -1,21 +1,9 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
+import type { EnergyData } from "@/utils/energyData";
 
-// Sample data - in real app, this would come from API
-const generateBatteryData = () => {
-  const hours = Array.from({ length: 24 }, (_, i) => i);
-  let batteryLevel = 50; // Start at 50%
-  
-  return hours.map((hour) => {
-    // Simulate battery charging/discharging
-    const change = Math.random() * 20 - 10;
-    batteryLevel = Math.max(0, Math.min(100, batteryLevel + change));
-    
-    return {
-      time: `${hour.toString().padStart(2, "0")}:00`,
-      level: parseFloat(batteryLevel.toFixed(1)),
-    };
-  });
-};
+interface VirtualBatteryChartProps {
+  data: EnergyData;
+}
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
@@ -31,14 +19,12 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const VirtualBatteryChart = () => {
-  const data = generateBatteryData();
-
+export const VirtualBatteryChart = ({ data }: VirtualBatteryChartProps) => {
   return (
     <div className="space-y-4">
       <div>
         <h3 className="text-lg font-semibold text-foreground">Virtual Battery Level</h3>
-        <p className="text-sm text-muted-foreground">Battery charge/discharge over time</p>
+        <p className="text-sm text-muted-foreground">Battery charge/discharge based on energy excess</p>
       </div>
 
       <div className="h-[350px] w-full">
@@ -65,7 +51,7 @@ export const VirtualBatteryChart = () => {
             <Tooltip content={<CustomTooltip />} />
             <Line
               type="monotone"
-              dataKey="level"
+              dataKey="batteryLevel"
               stroke="hsl(var(--primary))"
               strokeWidth={3}
               dot={false}
