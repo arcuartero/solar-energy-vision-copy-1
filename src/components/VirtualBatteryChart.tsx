@@ -51,6 +51,7 @@ export const VirtualBatteryChart = ({ data }: VirtualBatteryChartProps) => {
               tickLine={false}
               tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
               label={{ value: "kWh", angle: -90, position: "insideLeft" }}
+              domain={['auto', 'auto']}
             />
             <Tooltip content={<CustomTooltip />} />
             <Line
