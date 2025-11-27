@@ -7,6 +7,7 @@ export const generateEnergyData = (viewType: ViewType = "daily") => {
   if (viewType === "daily") {
     // Original hourly data for a day (24 hours)
     const hours = Array.from({ length: 24 }, (_, i) => i);
+    const chargingHour = Math.floor(Math.random() * 3) + 9; // Random hour between 9-11
     
     const data = hours.map((hour) => {
       const isDayTime = hour >= 8 && hour <= 18;
@@ -19,13 +20,16 @@ export const generateEnergyData = (viewType: ViewType = "daily") => {
         ? -(Math.random() * 4 + 1)
         : Math.random() > 0.6 ? -(Math.random() * 2) : 0;
       
-      const netExcess = excessProduction + excessConsumption;
+      const publicCharging = hour === chargingHour ? -(Math.random() * 8 + 5) : 0;
+      
+      const netExcess = excessProduction + excessConsumption + publicCharging;
       storedEnergy = Math.max(0, storedEnergy + netExcess);
       
       return {
         time: `${hour.toString().padStart(2, "0")}:00`,
         excessProduction,
         excessConsumption,
+        publicCharging,
         storedEnergy: parseFloat(storedEnergy.toFixed(2)),
       };
     });
@@ -46,13 +50,16 @@ export const generateEnergyData = (viewType: ViewType = "daily") => {
         ? -(Math.random() * 25 + 15)
         : -(Math.random() * 35 + 20);
       
-      const netExcess = excessProduction + excessConsumption;
+      const publicCharging = Math.random() > 0.3 ? -(Math.random() * 40 + 30) : 0;
+      
+      const netExcess = excessProduction + excessConsumption + publicCharging;
       storedEnergy = Math.max(0, storedEnergy + netExcess);
       
       return {
         time: day,
         excessProduction,
         excessConsumption,
+        publicCharging,
         storedEnergy: parseFloat(storedEnergy.toFixed(2)),
       };
     });
@@ -67,14 +74,16 @@ export const generateEnergyData = (viewType: ViewType = "daily") => {
       const seasonalFactor = Math.sin((i / 12) * Math.PI * 2) * 0.3 + 0.7;
       const excessProduction = (Math.random() * 200 + 150) * seasonalFactor;
       const excessConsumption = -(Math.random() * 150 + 100) * seasonalFactor;
+      const publicCharging = -(Math.random() * 600 + 400) * seasonalFactor;
       
-      const netExcess = excessProduction + excessConsumption;
+      const netExcess = excessProduction + excessConsumption + publicCharging;
       storedEnergy = Math.max(0, storedEnergy + netExcess);
       
       return {
         time: month,
         excessProduction,
         excessConsumption,
+        publicCharging,
         storedEnergy: parseFloat(storedEnergy.toFixed(2)),
       };
     });

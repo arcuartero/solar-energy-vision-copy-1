@@ -60,6 +60,12 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
                         {Math.abs(data.excessConsumption).toFixed(2)} kWh
                       </p>
                     )}
+                    {data.publicCharging < 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        <span className="font-medium" style={{ color: "hsl(var(--destructive))" }}>Public Charging:</span>{" "}
+                        {Math.abs(data.publicCharging).toFixed(2)} kWh
+                      </p>
+                    )}
                   </div>
                 );
               }}
@@ -75,6 +81,11 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
                 <Cell key={`cell-consumption-${index}`} fill="hsl(var(--chart-separator))" />
               ))}
             </Bar>
+            <Bar dataKey="publicCharging" radius={[4, 4, 0, 0]} barSize={20}>
+              {data.map((entry, index) => (
+                <Cell key={`cell-charging-${index}`} fill="hsl(var(--destructive))" />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -87,6 +98,10 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-chart-separator" />
           <span className="text-muted-foreground">Excess Consumption (drains battery)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-destructive" />
+          <span className="text-muted-foreground">Public Charging (drains battery)</span>
         </div>
       </div>
     </div>
