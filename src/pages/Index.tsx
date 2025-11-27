@@ -9,6 +9,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const Index = () => {
   const [viewType, setViewType] = useState<"daily" | "weekly" | "monthly">("daily");
+  const [showPublicCharging, setShowPublicCharging] = useState(true);
   
   // Generate connected data based on view type
   const energyData = useMemo(() => generateEnergyData(viewType), [viewType]);
@@ -43,12 +44,19 @@ const Index = () => {
           <div className="lg:col-span-2 space-y-6">
             {/* Excess Production/Consumption Card */}
             <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
-              <EnergyExcessChart data={energyData} />
+              <EnergyExcessChart 
+                data={energyData} 
+                showPublicCharging={showPublicCharging}
+                setShowPublicCharging={setShowPublicCharging}
+              />
             </div>
 
             {/* Virtual Battery Card */}
             <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
-              <VirtualBatteryChart data={energyData} />
+              <VirtualBatteryChart 
+                data={energyData} 
+                showPublicCharging={showPublicCharging}
+              />
             </div>
           </div>
 
