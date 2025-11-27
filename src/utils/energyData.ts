@@ -2,7 +2,8 @@ export type ViewType = "daily" | "weekly" | "monthly";
 
 // Generate connected energy data where stored energy is calculated from excess production/consumption
 export const generateEnergyData = (viewType: ViewType = "daily") => {
-  let storedEnergy = 5; // Start at 5 kWh
+  // Scale initial stored energy based on view type
+  let storedEnergy = viewType === "daily" ? 5 : viewType === "weekly" ? 50 : 200;
 
   if (viewType === "daily") {
     // Original hourly data for a day (24 hours)
