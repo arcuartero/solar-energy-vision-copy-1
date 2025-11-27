@@ -25,10 +25,16 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
   // Calculate net energy for each data point (production - consumption)
-  const chartData = data.map(point => ({
-    time: point.time,
-    netEnergy: parseFloat((point.excessProduction + point.excessConsumption).toFixed(2))
-  }));
+  // Split into positive and negative for separate coloring
+  const chartData = data.map(point => {
+    const netEnergy = parseFloat((point.excessProduction + point.excessConsumption).toFixed(2));
+    return {
+      time: point.time,
+      netEnergy: netEnergy,
+      positiveEnergy: netEnergy > 0 ? netEnergy : null,
+      negativeEnergy: netEnergy < 0 ? netEnergy : null,
+    };
+  });
 
   return (
     <div className="space-y-4">
@@ -59,29 +65,14 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
             <Tooltip content={<CustomTooltip />} />
             <ReferenceLine y={0} stroke="hsl(var(--border))" strokeWidth={2} />
             <Bar
-              dataKey="netEnergy"
+              dataKey="positiveEnergy"
               fill="hsl(var(--primary))"
-              shape={(props: any) => {
-                const { fill, x, y, width, height, payload } = props;
-                const value = payload.netEnergy;
-                const barFill = value < 0 ? "hsl(var(--destructive))" : fill;
-                
-                // For negative values, bars should extend downward from zero
-                // For positive values, bars should extend upward from zero
-                const radius = value >= 0 ? [4, 4, 0, 0] : [0, 0, 4, 4];
-                
-                return (
-                  <rect
-                    x={x}
-                    y={y}
-                    width={width}
-                    height={Math.abs(height)}
-                    fill={barFill}
-                    rx={4}
-                    ry={4}
-                  />
-                );
-              }}
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              dataKey="negativeEnergy"
+              fill="hsl(var(--destructive))"
+              radius={[0, 0, 4, 4]}
             />
           </BarChart>
         </ResponsiveContainer>
