@@ -3,6 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, 
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -13,12 +14,27 @@ interface EnergyExcessChartProps {
 }
 
 export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
+  const [showPublicCharging, setShowPublicCharging] = useState(true);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-foreground">Excess Production & Consumption</h3>
           <p className="text-sm text-muted-foreground">Energy balance over time</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Checkbox 
+            id="show-charging" 
+            checked={showPublicCharging}
+            onCheckedChange={(checked) => setShowPublicCharging(checked === true)}
+          />
+          <label 
+            htmlFor="show-charging" 
+            className="text-sm text-muted-foreground cursor-pointer"
+          >
+            Show Public Charging
+          </label>
         </div>
       </div>
 
@@ -60,7 +76,7 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
                         {Math.abs(data.excessConsumption).toFixed(2)} kWh
                       </p>
                     )}
-                    {data.publicCharging < 0 && (
+                    {showPublicCharging && data.publicCharging < 0 && (
                       <p className="text-sm text-muted-foreground">
                         <span className="font-medium" style={{ color: "hsl(var(--chart-charging))" }}>Public Charging:</span>{" "}
                         {Math.abs(data.publicCharging).toFixed(2)} kWh
@@ -81,11 +97,13 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
                 <Cell key={`cell-consumption-${index}`} fill="hsl(var(--chart-consumption))" />
               ))}
             </Bar>
-            <Bar dataKey="publicCharging" radius={[4, 4, 0, 0]} barSize={20}>
-              {data.map((entry, index) => (
-                <Cell key={`cell-charging-${index}`} fill="hsl(var(--chart-charging))" />
-              ))}
-            </Bar>
+            {showPublicCharging && (
+              <Bar dataKey="publicCharging" radius={[4, 4, 0, 0]} barSize={20}>
+                {data.map((entry, index) => (
+                  <Cell key={`cell-charging-${index}`} fill="hsl(var(--chart-charging))" />
+                ))}
+              </Bar>
+            )}
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -99,10 +117,12 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
           <div className="w-4 h-4 rounded" style={{ backgroundColor: "hsl(var(--chart-consumption))" }} />
           <span className="text-muted-foreground">Excess Consumption (drains battery)</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded" style={{ backgroundColor: "hsl(var(--chart-charging))" }} />
-          <span className="text-muted-foreground">Public Charging (drains battery)</span>
-        </div>
+        {showPublicCharging && (
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded" style={{ backgroundColor: "hsl(var(--chart-charging))" }} />
+            <span className="text-muted-foreground">Public Charging (drains battery)</span>
+          </div>
+        )}
       </div>
     </div>
   );
