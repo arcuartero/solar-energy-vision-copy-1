@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from "recharts";
 import type { EnergyData } from "@/utils/energyData";
 
 interface NetEnergyChartProps {
@@ -25,14 +25,11 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
   // Calculate net energy for each data point (production - consumption)
-  // Split into positive and negative for separate coloring
   const chartData = data.map(point => {
     const netEnergy = parseFloat((point.excessProduction + point.excessConsumption).toFixed(2));
     return {
       time: point.time,
       netEnergy: netEnergy,
-      positiveEnergy: netEnergy > 0 ? netEnergy : null,
-      negativeEnergy: netEnergy < 0 ? netEnergy : null,
     };
   });
 
@@ -45,7 +42,7 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
 
       <div className="h-[350px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
+          <LineChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
@@ -64,17 +61,19 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
             />
             <Tooltip content={<CustomTooltip />} />
             <ReferenceLine y={0} stroke="hsl(var(--border))" strokeWidth={2} />
-            <Bar
-              dataKey="positiveEnergy"
-              fill="hsl(var(--primary))"
-              radius={[4, 4, 0, 0]}
+            <Line
+              type="monotone"
+              dataKey="netEnergy"
+              stroke="hsl(var(--primary))"
+              strokeWidth={3}
+              dot={(props: any) => {
+                const { cx, cy, payload } = props;
+                const color = payload.netEnergy < 0 ? "hsl(var(--destructive))" : "hsl(var(--primary))";
+                return <circle cx={cx} cy={cy} r={4} fill={color} />;
+              }}
+              activeDot={{ r: 6 }}
             />
-            <Bar
-              dataKey="negativeEnergy"
-              fill="hsl(var(--destructive))"
-              radius={[0, 0, 4, 4]}
-            />
-          </BarChart>
+          </LineChart>
         </ResponsiveContainer>
       </div>
 
