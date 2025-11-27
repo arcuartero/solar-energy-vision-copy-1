@@ -1,7 +1,12 @@
+import { useMemo } from "react";
 import { EnergyExcessChart } from "@/components/EnergyExcessChart";
 import { VirtualBatteryChart } from "@/components/VirtualBatteryChart";
+import { generateEnergyData } from "@/utils/energyData";
 
 const Index = () => {
+  // Generate connected data once per render
+  const energyData = useMemo(() => generateEnergyData(), []);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -15,12 +20,12 @@ const Index = () => {
         <div className="space-y-6">
           {/* Excess Production/Consumption Card */}
           <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
-            <EnergyExcessChart />
+            <EnergyExcessChart data={energyData} />
           </div>
 
           {/* Virtual Battery Card */}
           <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
-            <VirtualBatteryChart />
+            <VirtualBatteryChart data={energyData} />
           </div>
         </div>
       </div>
