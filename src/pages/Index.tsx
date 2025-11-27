@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { EnergyExcessChart } from "@/components/EnergyExcessChart";
 import { VirtualBatteryChart } from "@/components/VirtualBatteryChart";
-import { NetEnergyChart } from "@/components/NetEnergyChart";
 import { BatteryInfoCard } from "@/components/BatteryInfoCard";
 import { RealTimeValueCard } from "@/components/RealTimeValueCard";
 import { generateEnergyData } from "@/utils/energyData";
@@ -44,11 +43,6 @@ const Index = () => {
             {/* Excess Production/Consumption Card */}
             <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
               <EnergyExcessChart data={energyData} />
-            </div>
-
-            {/* Net Energy Card */}
-            <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
-              <NetEnergyChart data={energyData} />
             </div>
 
             {/* Virtual Battery Card */}
