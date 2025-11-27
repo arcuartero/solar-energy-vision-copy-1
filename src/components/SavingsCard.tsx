@@ -5,12 +5,14 @@ interface SavingsCardProps {
   data: EnergyData;
 }
 
-// Calculate total savings over the period
+// Calculate savings breakdown over the period
 const calculateSavings = (data: EnergyData) => {
   // Base electricity price (€/kWh)
   const basePrice = 0.25;
   
-  let totalSavings = 0;
+  let offPeakSavings = 0;
+  let peakAvoidanceSavings = 0;
+  let virtualBatterySavings = 0;
   
   data.forEach(entry => {
     const storedEnergy = entry.storedEnergy || 0;
@@ -18,34 +20,32 @@ const calculateSavings = (data: EnergyData) => {
     const dayOfWeek = new Date(entry.time).getDay();
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
     
-    // Calculate what they would have paid at normal rate
     const normalCost = storedEnergy * basePrice;
     
-    // Calculate actual cost based on time of day
-    let actualCost = normalCost;
+    // Off-peak storage savings (-25%)
+    if ((isWeekend && (hour < 6 || (hour >= 12 && hour < 17))) || (!isWeekend && hour < 6)) {
+      offPeakSavings += normalCost * 0.25;
+    }
     
-    // Peak hours (17:00-24:00): +6% more expensive
+    // Peak avoidance savings (+6% avoided)
     if (hour >= 17) {
-      actualCost = normalCost * 1.06;
-    }
-    // Off-peak hours (-25% cheaper)
-    else if (isWeekend && (hour < 6 || (hour >= 12 && hour < 17))) {
-      actualCost = normalCost * 0.75;
-    } else if (!isWeekend && hour < 6) {
-      actualCost = normalCost * 0.75;
+      peakAvoidanceSavings += normalCost * 0.06;
     }
     
-    // Savings is when we store during off-peak and use during peak
-    // For simplicity, assume stored energy was charged during off-peak
-    const offPeakCost = normalCost * 0.75;
-    totalSavings += (normalCost - offPeakCost);
+    // Virtual battery optimization (additional 3% efficiency)
+    virtualBatterySavings += normalCost * 0.03;
   });
   
-  return totalSavings;
+  return {
+    offPeakSavings,
+    peakAvoidanceSavings,
+    virtualBatterySavings,
+    total: offPeakSavings + peakAvoidanceSavings + virtualBatterySavings
+  };
 };
 
 export const SavingsCard = ({ data }: SavingsCardProps) => {
-  const totalSavings = calculateSavings(data);
+  const savings = calculateSavings(data);
 
   return (
     <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50 h-fit">
@@ -56,24 +56,25 @@ export const SavingsCard = ({ data }: SavingsCardProps) => {
         </div>
       </div>
 
-      <div className="space-y-6 mb-6">
-        <div className="bg-muted/30 rounded-lg p-4">
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            <strong className="text-foreground">Smart energy storage</strong> during off-peak hours when electricity is 25% cheaper.
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-            <strong className="text-foreground">Optimized usage</strong> by avoiding peak hours that cost 6% more than standard rates.
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-            <strong className="text-foreground">Virtual battery benefits</strong> maximizing your solar production value throughout the day.
-          </p>
+      <div className="space-y-4 mb-6">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-muted-foreground">Off-peak storage</span>
+          <span className="font-semibold text-foreground">€{savings.offPeakSavings.toFixed(2)}</span>
+        </div>
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-muted-foreground">Peak hour avoidance</span>
+          <span className="font-semibold text-foreground">€{savings.peakAvoidanceSavings.toFixed(2)}</span>
+        </div>
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-muted-foreground">Virtual battery optimization</span>
+          <span className="font-semibold text-foreground">€{savings.virtualBatterySavings.toFixed(2)}</span>
         </div>
       </div>
 
       <div className="pt-4 border-t border-border/50">
         <p className="text-sm text-muted-foreground mb-2">Total saved in last 30 days</p>
         <div className="text-4xl font-bold text-chart-production">
-          €{totalSavings.toFixed(2)}
+          €{savings.total.toFixed(2)}
         </div>
       </div>
     </div>
