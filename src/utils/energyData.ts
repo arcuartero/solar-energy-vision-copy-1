@@ -59,19 +59,20 @@ export const generateEnergyData = (viewType: ViewType = "daily") => {
     
     return data;
   } else {
-    // Monthly data (30 days)
-    const data = Array.from({ length: 30 }, (_, i) => {
-      const day = i + 1;
-      // More variation throughout the month
-      const seasonalFactor = Math.sin((i / 30) * Math.PI) * 0.3 + 0.7;
-      const excessProduction = (Math.random() * 40 + 30) * seasonalFactor;
-      const excessConsumption = -(Math.random() * 35 + 20) * seasonalFactor;
+    // Monthly data (12 months)
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    const data = months.map((month, i) => {
+      // More variation throughout the year (seasonal patterns)
+      const seasonalFactor = Math.sin((i / 12) * Math.PI * 2) * 0.3 + 0.7;
+      const excessProduction = (Math.random() * 200 + 150) * seasonalFactor;
+      const excessConsumption = -(Math.random() * 150 + 100) * seasonalFactor;
       
       const netExcess = excessProduction + excessConsumption;
       storedEnergy = Math.max(0, storedEnergy + netExcess);
       
       return {
-        time: day.toString(),
+        time: month,
         excessProduction,
         excessConsumption,
         storedEnergy: parseFloat(storedEnergy.toFixed(2)),
