@@ -70,7 +70,7 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
                 <Cell key={`cell-production-${index}`} fill="hsl(var(--primary))" />
               ))}
             </Bar>
-            <Bar dataKey="excessConsumption" radius={[0, 0, 4, 4]} barSize={20}>
+            <Bar dataKey="excessConsumption" radius={[4, 4, 0, 0]} barSize={20}>
               {data.map((entry, index) => (
                 <Cell key={`cell-consumption-${index}`} fill="hsl(var(--chart-separator))" />
               ))}
