@@ -1,4 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine, Area } from "recharts";
+import { ComposedChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine, Area } from "recharts";
 import type { EnergyData } from "@/utils/energyData";
 
 interface NetEnergyChartProps {
@@ -43,7 +43,7 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
 
       <div className="h-[350px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
+          <ComposedChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
@@ -81,7 +81,7 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
               }}
               activeDot={{ r: 6 }}
             />
-          </LineChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
 
