@@ -50,19 +50,19 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
                     <p className="font-semibold text-foreground mb-2">{data.time}</p>
                     {data.excessProduction > 0 && (
                       <p className="text-sm text-muted-foreground">
-                        <span className="font-medium text-primary">Excess Production:</span>{" "}
+                        <span className="font-medium" style={{ color: "hsl(var(--chart-production))" }}>Excess Production:</span>{" "}
                         {data.excessProduction.toFixed(2)} kWh
                       </p>
                     )}
                     {data.excessConsumption < 0 && (
                       <p className="text-sm text-muted-foreground">
-                        <span className="font-medium" style={{ color: "hsl(var(--chart-separator))" }}>Excess Consumption:</span>{" "}
+                        <span className="font-medium" style={{ color: "hsl(var(--chart-consumption))" }}>Excess Consumption:</span>{" "}
                         {Math.abs(data.excessConsumption).toFixed(2)} kWh
                       </p>
                     )}
                     {data.publicCharging < 0 && (
                       <p className="text-sm text-muted-foreground">
-                        <span className="font-medium" style={{ color: "hsl(var(--destructive))" }}>Public Charging:</span>{" "}
+                        <span className="font-medium" style={{ color: "hsl(var(--chart-charging))" }}>Public Charging:</span>{" "}
                         {Math.abs(data.publicCharging).toFixed(2)} kWh
                       </p>
                     )}
@@ -73,17 +73,17 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
             />
             <Bar dataKey="excessProduction" radius={[4, 4, 0, 0]} barSize={20}>
               {data.map((entry, index) => (
-                <Cell key={`cell-production-${index}`} fill="hsl(var(--primary))" />
+                <Cell key={`cell-production-${index}`} fill="hsl(var(--chart-production))" />
               ))}
             </Bar>
             <Bar dataKey="excessConsumption" radius={[4, 4, 0, 0]} barSize={20}>
               {data.map((entry, index) => (
-                <Cell key={`cell-consumption-${index}`} fill="hsl(var(--chart-separator))" />
+                <Cell key={`cell-consumption-${index}`} fill="hsl(var(--chart-consumption))" />
               ))}
             </Bar>
             <Bar dataKey="publicCharging" radius={[4, 4, 0, 0]} barSize={20}>
               {data.map((entry, index) => (
-                <Cell key={`cell-charging-${index}`} fill="hsl(var(--destructive))" />
+                <Cell key={`cell-charging-${index}`} fill="hsl(var(--chart-charging))" />
               ))}
             </Bar>
           </BarChart>
@@ -92,15 +92,15 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
 
       <div className="flex items-center justify-center gap-6 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-primary" />
+          <div className="w-4 h-4 rounded" style={{ backgroundColor: "hsl(var(--chart-production))" }} />
           <span className="text-muted-foreground">Excess Production (charges battery)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-chart-separator" />
+          <div className="w-4 h-4 rounded" style={{ backgroundColor: "hsl(var(--chart-consumption))" }} />
           <span className="text-muted-foreground">Excess Consumption (drains battery)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-destructive" />
+          <div className="w-4 h-4 rounded" style={{ backgroundColor: "hsl(var(--chart-charging))" }} />
           <span className="text-muted-foreground">Public Charging (drains battery)</span>
         </div>
       </div>

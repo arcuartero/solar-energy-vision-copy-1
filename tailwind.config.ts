@@ -50,6 +50,9 @@ export default {
         chart: {
           grid: "hsl(var(--chart-grid))",
           separator: "hsl(var(--chart-separator))",
+          production: "hsl(var(--chart-production))",
+          consumption: "hsl(var(--chart-consumption))",
+          charging: "hsl(var(--chart-charging))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
