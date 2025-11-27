@@ -3,6 +3,7 @@ import { EnergyExcessChart } from "@/components/EnergyExcessChart";
 import { VirtualBatteryChart } from "@/components/VirtualBatteryChart";
 import { BatteryInfoCard } from "@/components/BatteryInfoCard";
 import { RealTimeValueCard } from "@/components/RealTimeValueCard";
+import { SavingsCard } from "@/components/SavingsCard";
 import { generateEnergyData } from "@/utils/energyData";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -55,6 +56,7 @@ const Index = () => {
           <div className="lg:col-span-1 space-y-6">
             <BatteryInfoCard data={energyData} viewType={viewType} />
             <RealTimeValueCard data={energyData} />
+            <SavingsCard data={energyData} />
           </div>
         </div>
       </div>
