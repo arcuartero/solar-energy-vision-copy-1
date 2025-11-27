@@ -40,6 +40,9 @@ All colors MUST be HSL.
     
     --chart-grid: 0 0% 93%;
     --chart-separator: 0 0% 88%;
+    --chart-production: 120 70% 45%;
+    --chart-consumption: 30 90% 55%;
+    --chart-charging: 345 70% 40%;
     
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-card: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
@@ -92,6 +95,9 @@ All colors MUST be HSL.
     
     --chart-grid: 0 0% 22%;
     --chart-separator: 0 0% 28%;
+    --chart-production: 120 70% 50%;
+    --chart-consumption: 30 90% 60%;
+    --chart-charging: 345 70% 45%;
     
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
