@@ -1,4 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Area, AreaChart } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
 import type { EnergyData } from "@/utils/energyData";
 
 interface VirtualBatteryChartProps {
@@ -29,7 +29,7 @@ export const VirtualBatteryChart = ({ data }: VirtualBatteryChartProps) => {
 
       <div className="h-[350px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
+          <LineChart
             data={data}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
@@ -47,23 +47,15 @@ export const VirtualBatteryChart = ({ data }: VirtualBatteryChartProps) => {
               label={{ value: "kWh", angle: -90, position: "insideLeft" }}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Area
+            <Line
               type="monotone"
-              dataKey={(entry: any) => entry.storedEnergy >= 0 ? entry.storedEnergy : 0}
+              dataKey="storedEnergy"
               stroke="hsl(var(--primary))"
               strokeWidth={3}
-              fill="hsl(var(--primary))"
-              fillOpacity={0.3}
+              dot={false}
+              activeDot={{ r: 6, fill: "hsl(var(--primary))" }}
             />
-            <Area
-              type="monotone"
-              dataKey={(entry: any) => entry.storedEnergy < 0 ? entry.storedEnergy : 0}
-              stroke="hsl(var(--chart-bordeaux))"
-              strokeWidth={3}
-              fill="hsl(var(--chart-bordeaux))"
-              fillOpacity={0.3}
-            />
-          </AreaChart>
+          </LineChart>
         </ResponsiveContainer>
       </div>
 
