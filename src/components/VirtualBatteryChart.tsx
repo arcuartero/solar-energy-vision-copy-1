@@ -11,7 +11,7 @@ const CustomTooltip = ({ active, payload }: any) => {
       <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
         <p className="text-sm font-medium text-foreground">{payload[0].payload.time}</p>
         <p className="text-sm text-primary font-semibold">
-          {payload[0].value}% charged
+          {payload[0].value.toFixed(2)} kWh stored
         </p>
       </div>
     );
@@ -23,8 +23,8 @@ export const VirtualBatteryChart = ({ data }: VirtualBatteryChartProps) => {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-semibold text-foreground">Virtual Battery Level</h3>
-        <p className="text-sm text-muted-foreground">Battery charge/discharge based on energy excess</p>
+        <h3 className="text-lg font-semibold text-foreground">Virtual Battery Energy Stored</h3>
+        <p className="text-sm text-muted-foreground">Energy stored based on excess production/consumption</p>
       </div>
 
       <div className="h-[350px] w-full">
@@ -44,14 +44,12 @@ export const VirtualBatteryChart = ({ data }: VirtualBatteryChartProps) => {
               axisLine={false}
               tickLine={false}
               tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              domain={[0, 100]}
-              ticks={[0, 25, 50, 75, 100]}
-              label={{ value: "%", angle: -90, position: "insideLeft" }}
+              label={{ value: "kWh", angle: -90, position: "insideLeft" }}
             />
             <Tooltip content={<CustomTooltip />} />
             <Line
               type="monotone"
-              dataKey="batteryLevel"
+              dataKey="storedEnergy"
               stroke="hsl(var(--primary))"
               strokeWidth={3}
               dot={false}
@@ -63,7 +61,7 @@ export const VirtualBatteryChart = ({ data }: VirtualBatteryChartProps) => {
 
       <div className="flex items-center justify-center gap-2 text-sm">
         <div className="w-8 h-0.5 bg-primary" />
-        <span className="text-muted-foreground">Battery Charge Level</span>
+        <span className="text-muted-foreground">Stored Energy (kWh)</span>
       </div>
     </div>
   );

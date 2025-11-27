@@ -1,9 +1,8 @@
 export type ViewType = "daily" | "weekly" | "monthly";
 
-// Generate connected energy data where battery level is calculated from excess production/consumption
+// Generate connected energy data where stored energy is calculated from excess production/consumption
 export const generateEnergyData = (viewType: ViewType = "daily") => {
-  const batteryCapacity = 10; // 10 kWh capacity for scaling
-  let batteryLevel = 50; // Start at 50%
+  let storedEnergy = 5; // Start at 5 kWh
 
   if (viewType === "daily") {
     // Original hourly data for a day (24 hours)
@@ -21,14 +20,13 @@ export const generateEnergyData = (viewType: ViewType = "daily") => {
         : Math.random() > 0.6 ? -(Math.random() * 2) : 0;
       
       const netExcess = excessProduction + excessConsumption;
-      const percentageChange = (netExcess / batteryCapacity) * 100;
-      batteryLevel = Math.max(0, Math.min(100, batteryLevel + percentageChange));
+      storedEnergy = Math.max(0, storedEnergy + netExcess);
       
       return {
         time: `${hour.toString().padStart(2, "0")}:00`,
         excessProduction,
         excessConsumption,
-        batteryLevel: parseFloat(batteryLevel.toFixed(1)),
+        storedEnergy: parseFloat(storedEnergy.toFixed(2)),
       };
     });
     
@@ -49,14 +47,13 @@ export const generateEnergyData = (viewType: ViewType = "daily") => {
         : -(Math.random() * 35 + 20);
       
       const netExcess = excessProduction + excessConsumption;
-      const percentageChange = (netExcess / batteryCapacity) * 100 / 24; // Average per hour
-      batteryLevel = Math.max(0, Math.min(100, batteryLevel + percentageChange));
+      storedEnergy = Math.max(0, storedEnergy + netExcess);
       
       return {
         time: day,
         excessProduction,
         excessConsumption,
-        batteryLevel: parseFloat(batteryLevel.toFixed(1)),
+        storedEnergy: parseFloat(storedEnergy.toFixed(2)),
       };
     });
     
@@ -71,14 +68,13 @@ export const generateEnergyData = (viewType: ViewType = "daily") => {
       const excessConsumption = -(Math.random() * 35 + 20) * seasonalFactor;
       
       const netExcess = excessProduction + excessConsumption;
-      const percentageChange = (netExcess / batteryCapacity) * 100 / 24; // Average per hour
-      batteryLevel = Math.max(0, Math.min(100, batteryLevel + percentageChange));
+      storedEnergy = Math.max(0, storedEnergy + netExcess);
       
       return {
         time: day.toString(),
         excessProduction,
         excessConsumption,
-        batteryLevel: parseFloat(batteryLevel.toFixed(1)),
+        storedEnergy: parseFloat(storedEnergy.toFixed(2)),
       };
     });
     
