@@ -21,7 +21,7 @@ export const BatteryInfoCard = ({ data, viewType }: BatteryInfoCardProps) => {
   const periodLabel = viewType === "daily" ? "today" : viewType === "weekly" ? "this week" : "this month";
 
   return (
-    <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50 h-fit sticky top-8">
+    <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50 h-fit">
       <div className="flex items-start justify-between mb-6">
         <h3 className="text-lg font-medium text-muted-foreground">Virtual Battery</h3>
         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
