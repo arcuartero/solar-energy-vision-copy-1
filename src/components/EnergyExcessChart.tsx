@@ -13,38 +13,13 @@ interface EnergyExcessChartProps {
 }
 
 export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
-  const [date, setDate] = useState<Date>(new Date());
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-foreground">Excess Production & Consumption</h3>
-          <p className="text-sm text-muted-foreground">Hourly energy balance</p>
+          <p className="text-sm text-muted-foreground">Energy balance over time</p>
         </div>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "justify-start text-left font-normal rounded-lg shadow-sm",
-                !date && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {date ? format(date, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 rounded-xl shadow-lg" align="end">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(newDate) => newDate && setDate(newDate)}
-              initialFocus
-              className="pointer-events-auto"
-            />
-          </PopoverContent>
-        </Popover>
       </div>
 
       <div className="h-[400px] w-full">
