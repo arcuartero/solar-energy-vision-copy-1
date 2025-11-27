@@ -2,7 +2,7 @@ export type ViewType = "daily" | "weekly" | "monthly";
 
 // Generate connected energy data where stored energy is calculated from excess production/consumption
 export const generateEnergyData = (viewType: ViewType = "daily") => {
-  let storedEnergy = 8; // Start at 8 kWh
+  let storedEnergy = 5; // Start at 5 kWh
 
   if (viewType === "daily") {
     // Original hourly data for a day (24 hours)
@@ -43,14 +43,14 @@ export const generateEnergyData = (viewType: ViewType = "daily") => {
       // Weekend has different pattern
       const isWeekend = index >= 5;
       const excessProduction = isWeekend 
-        ? Math.random() * 35 + 25 
-        : Math.random() * 45 + 35;
+        ? Math.random() * 30 + 20 
+        : Math.random() * 40 + 30;
       
       const excessConsumption = isWeekend 
-        ? -(Math.random() * 20 + 10)
-        : -(Math.random() * 25 + 15);
+        ? -(Math.random() * 25 + 15)
+        : -(Math.random() * 35 + 20);
       
-      const publicCharging = Math.random() > 0.5 ? -(Math.random() * 30 + 20) : 0;
+      const publicCharging = Math.random() > 0.3 ? -(Math.random() * 40 + 30) : 0;
       
       const netExcess = excessProduction + excessConsumption + publicCharging;
       storedEnergy = Math.max(0, storedEnergy + netExcess);
