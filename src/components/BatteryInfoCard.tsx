@@ -8,16 +8,15 @@ interface BatteryInfoCardProps {
 }
 
 export const BatteryInfoCard = ({ data, viewType }: BatteryInfoCardProps) => {
-  // Get the latest battery level (last entry)
+  // Get the latest stored energy (last entry)
   const latestData = data[data.length - 1];
-  const batteryLevel = latestData?.batteryLevel || 0;
+  const storedEnergy = latestData?.storedEnergy || 0;
   
-  // Calculate total stored energy (assuming 10 kWh capacity)
-  const batteryCapacity = 10;
-  const storedEnergy = (batteryLevel / 100) * batteryCapacity;
+  // Calculate average stored energy for the period
+  const avgStoredEnergy = data.reduce((sum, d) => sum + d.storedEnergy, 0) / data.length;
   
-  // Calculate average for the period
-  const avgBatteryLevel = data.reduce((sum, d) => sum + d.batteryLevel, 0) / data.length;
+  // Calculate max stored energy in the period
+  const maxStoredEnergy = Math.max(...data.map(d => d.storedEnergy));
   
   const periodLabel = viewType === "daily" ? "today" : viewType === "weekly" ? "this week" : "this month";
 
@@ -38,18 +37,14 @@ export const BatteryInfoCard = ({ data, viewType }: BatteryInfoCardProps) => {
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Current Level</span>
-            <span className="font-semibold text-foreground">{batteryLevel.toFixed(0)}%</span>
-          </div>
-          <Progress value={batteryLevel} className="h-3" />
-        </div>
-        
         <div className="pt-4 border-t border-border/50">
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center justify-between text-sm mb-2">
             <span className="text-muted-foreground">Average {periodLabel}</span>
-            <span className="font-semibold text-foreground">{avgBatteryLevel.toFixed(0)}%</span>
+            <span className="font-semibold text-foreground">{avgStoredEnergy.toFixed(2)} kWh</span>
+          </div>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Peak {periodLabel}</span>
+            <span className="font-semibold text-foreground">{maxStoredEnergy.toFixed(2)} kWh</span>
           </div>
         </div>
       </div>
