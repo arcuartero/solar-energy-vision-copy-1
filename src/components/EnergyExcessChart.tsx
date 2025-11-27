@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, Tooltip } from "recharts";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -65,6 +65,30 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
               tickLine={false}
               tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
               label={{ value: "kWh", angle: -90, position: "insideLeft" }}
+            />
+            <Tooltip
+              content={({ active, payload }) => {
+                if (!active || !payload?.length) return null;
+                const data = payload[0].payload;
+                return (
+                  <div className="rounded-lg border bg-background p-3 shadow-lg">
+                    <p className="font-semibold text-foreground mb-2">{data.time}</p>
+                    {data.excessProduction > 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        <span className="font-medium text-primary">Excess Production:</span>{" "}
+                        {data.excessProduction.toFixed(2)} kWh
+                      </p>
+                    )}
+                    {data.excessConsumption < 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        <span className="font-medium" style={{ color: "hsl(var(--chart-separator))" }}>Excess Consumption:</span>{" "}
+                        {Math.abs(data.excessConsumption).toFixed(2)} kWh
+                      </p>
+                    )}
+                  </div>
+                );
+              }}
+              cursor={{ fill: "hsl(var(--muted) / 0.1)" }}
             />
             <Bar dataKey="excessProduction" radius={[4, 4, 0, 0]} barSize={20}>
               {data.map((entry, index) => (
