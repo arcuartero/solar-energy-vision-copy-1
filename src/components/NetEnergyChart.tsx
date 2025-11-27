@@ -24,12 +24,15 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
-  // Calculate net energy for each data point (production - consumption)
-  const chartData = data.map(point => {
+  // Calculate net energy and split into positive/negative for coloring
+  const chartData = data.map((point, index, array) => {
     const netEnergy = parseFloat((point.excessProduction + point.excessConsumption).toFixed(2));
+    
     return {
       time: point.time,
       netEnergy: netEnergy,
+      positiveEnergy: netEnergy >= 0 ? netEnergy : null,
+      negativeEnergy: netEnergy < 0 ? netEnergy : null,
     };
   });
 
@@ -63,15 +66,21 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
             <ReferenceLine y={0} stroke="hsl(var(--border))" strokeWidth={2} />
             <Line
               type="monotone"
-              dataKey="netEnergy"
-              stroke="hsl(var(--primary))"
+              dataKey="positiveEnergy"
+              stroke="rgb(34, 197, 94)"
               strokeWidth={3}
-              dot={(props: any) => {
-                const { cx, cy, payload } = props;
-                const color = payload.netEnergy < 0 ? "hsl(var(--destructive))" : "hsl(var(--primary))";
-                return <circle cx={cx} cy={cy} r={4} fill={color} />;
-              }}
+              dot={{ fill: "rgb(34, 197, 94)", r: 4 }}
               activeDot={{ r: 6 }}
+              connectNulls
+            />
+            <Line
+              type="monotone"
+              dataKey="negativeEnergy"
+              stroke="hsl(var(--destructive))"
+              strokeWidth={3}
+              dot={{ fill: "hsl(var(--destructive))", r: 4 }}
+              activeDot={{ r: 6 }}
+              connectNulls
             />
           </LineChart>
         </ResponsiveContainer>
@@ -79,11 +88,11 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
 
       <div className="flex items-center justify-center gap-4 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-3 bg-primary rounded" />
+          <div className="w-8 h-0.5 rounded" style={{ backgroundColor: "rgb(34, 197, 94)" }} />
           <span className="text-muted-foreground">Net Production</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-3 bg-destructive rounded" />
+          <div className="w-8 h-0.5 bg-destructive rounded" />
           <span className="text-muted-foreground">Net Consumption</span>
         </div>
       </div>
