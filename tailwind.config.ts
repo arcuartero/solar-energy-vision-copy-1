@@ -53,7 +53,6 @@ export default {
           production: "hsl(var(--chart-production))",
           consumption: "hsl(var(--chart-consumption))",
           charging: "hsl(var(--chart-charging))",
-          bordeaux: "hsl(var(--chart-bordeaux))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
