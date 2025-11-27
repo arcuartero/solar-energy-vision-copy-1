@@ -1,4 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine, Area } from "recharts";
 import type { EnergyData } from "@/utils/energyData";
 
 interface NetEnergyChartProps {
@@ -30,6 +30,7 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
     return {
       time: point.time,
       netEnergy: netEnergy,
+      storedEnergy: point.storedEnergy,
     };
   });
 
@@ -61,6 +62,13 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
             />
             <Tooltip content={<CustomTooltip />} />
             <ReferenceLine y={0} stroke="hsl(var(--border))" strokeWidth={2} />
+            <Area
+              type="monotone"
+              dataKey="storedEnergy"
+              fill="hsl(142 76% 36% / 0.3)"
+              stroke="hsl(142 76% 36%)"
+              strokeWidth={2}
+            />
             <Line
               type="monotone"
               dataKey="netEnergy"
@@ -78,6 +86,10 @@ export const NetEnergyChart = ({ data }: NetEnergyChartProps) => {
       </div>
 
       <div className="flex items-center justify-center gap-4 text-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-3 rounded" style={{ backgroundColor: 'hsl(142 76% 36% / 0.8)' }} />
+          <span className="text-muted-foreground">Stored Energy</span>
+        </div>
         <div className="flex items-center gap-2">
           <div className="w-8 h-3 bg-primary rounded" />
           <span className="text-muted-foreground">Net Production</span>
