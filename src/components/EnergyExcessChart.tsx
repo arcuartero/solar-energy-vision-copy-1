@@ -33,7 +33,7 @@ export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
             htmlFor="show-charging" 
             className="text-sm text-muted-foreground cursor-pointer"
           >
-            Show Public Charging
+            Include Public Charging
           </label>
         </div>
       </div>
