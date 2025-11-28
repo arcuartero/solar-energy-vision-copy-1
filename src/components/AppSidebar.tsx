@@ -29,8 +29,8 @@ export function AppSidebar() {
     <Sidebar className="border-r border-border" collapsible="icon">
       <SidebarContent className="flex flex-col h-full">
         {/* Logo at top */}
-        <div className="p-4 flex items-center justify-center">
-          <img src={enovoLogo} alt="Enovo" className="h-8 w-auto" />
+        <div className="p-4 flex items-center justify-start">
+          <img src={enovoLogo} alt="Enovo" className="h-12 w-auto" />
         </div>
 
         {/* Menu items */}
