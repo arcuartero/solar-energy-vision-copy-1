@@ -16,19 +16,19 @@ import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
-
 const Index = () => {
   const [viewType, setViewType] = useState<"daily" | "weekly" | "monthly" | "custom">("daily");
-  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+  const [dateRange, setDateRange] = useState<{
+    from: Date | undefined;
+    to: Date | undefined;
+  }>({
     from: subDays(new Date(), 365),
-    to: new Date(),
+    to: new Date()
   });
-  
+
   // Generate connected data based on view type
   const energyData = useMemo(() => generateEnergyData(viewType), [viewType]);
-
-  return (
-    <SidebarProvider defaultOpen={true}>
+  return <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
         <div className="flex-1 flex flex-col w-full">
@@ -44,7 +44,7 @@ const Index = () => {
         <div className="bg-card rounded-lg shadow-sm p-8 border border-border/30">
           {/* Date Picker */}
           <div className="flex justify-end mb-6 gap-3">
-            <ToggleGroup type="single" value={viewType} onValueChange={(value) => value && setViewType(value as any)}>
+            <ToggleGroup type="single" value={viewType} onValueChange={value => value && setViewType(value as any)}>
               <ToggleGroupItem value="daily" aria-label="Daily view" className="px-6">
                 Daily
               </ToggleGroupItem>
@@ -58,42 +58,24 @@ const Index = () => {
 
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "px-6 justify-start text-left font-normal",
-                    !dateRange.from && "text-muted-foreground"
-                  )}
-                >
+                <Button variant="outline" className={cn("px-6 justify-start text-left font-normal", !dateRange.from && "text-muted-foreground")}>
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange.from ? (
-                    dateRange.to ? (
-                      <>
+                  {dateRange.from ? dateRange.to ? <>
                         {format(dateRange.from, "LLL dd, y")} -{" "}
                         {format(dateRange.to, "LLL dd, y")}
-                      </>
-                    ) : (
-                      format(dateRange.from, "LLL dd, y")
-                    )
-                  ) : (
-                    <span>Custom range</span>
-                  )}
+                      </> : format(dateRange.from, "LLL dd, y") : <span>Custom range</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
-                <Calendar
-                  mode="range"
-                  selected={dateRange}
-                  onSelect={(range) => {
-                    setDateRange({ from: range?.from, to: range?.to });
+                <Calendar mode="range" selected={dateRange} onSelect={range => {
+                    setDateRange({
+                      from: range?.from,
+                      to: range?.to
+                    });
                     if (range?.from && range?.to) {
                       setViewType("custom");
                     }
-                  }}
-                  numberOfMonths={2}
-                  initialFocus
-                  className={cn("p-3 pointer-events-auto")}
-                />
+                  }} numberOfMonths={2} initialFocus className={cn("p-3 pointer-events-auto")} />
               </PopoverContent>
             </Popover>
           </div>
@@ -103,13 +85,9 @@ const Index = () => {
             {/* Left Column - Charts */}
             <div className="lg:col-span-8">
               <div className="bg-card rounded-lg shadow-sm p-6 border border-border/50 space-y-6">
-                <EnergyExcessChart 
-                  data={energyData} 
-                />
+                <EnergyExcessChart data={energyData} className="border-0" />
                 
-                <VirtualBatteryChart 
-                  data={energyData} 
-                />
+                <VirtualBatteryChart data={energyData} />
               </div>
             </div>
 
@@ -130,8 +108,6 @@ const Index = () => {
         </div>
       </div>
       </div>
-    </SidebarProvider>
-  );
+    </SidebarProvider>;
 };
-
 export default Index;
