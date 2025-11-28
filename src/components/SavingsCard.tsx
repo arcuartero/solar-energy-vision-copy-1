@@ -56,7 +56,7 @@ export const SavingsCard = ({
         
       </div>
 
-      <div className="pt-4 border-t border-border/50">
+      <div className="pt-4">
         <div className="text-4xl font-bold text-chart-production">
           €{savings.total.toFixed(2)}
         </div>
