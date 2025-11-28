@@ -13,7 +13,6 @@ import { Header } from "@/components/Header";
 
 const Index = () => {
   const [viewType, setViewType] = useState<"daily" | "weekly" | "monthly">("daily");
-  const [showPublicCharging, setShowPublicCharging] = useState(true);
   
   // Generate connected data based on view type
   const energyData = useMemo(() => generateEnergyData(viewType), [viewType]);
@@ -54,13 +53,10 @@ const Index = () => {
             <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50 space-y-8">
               <EnergyExcessChart 
                 data={energyData} 
-                showPublicCharging={showPublicCharging}
-                setShowPublicCharging={setShowPublicCharging}
               />
               
               <VirtualBatteryChart 
                 data={energyData} 
-                showPublicCharging={showPublicCharging}
               />
             </div>
           </div>

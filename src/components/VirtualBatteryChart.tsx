@@ -1,10 +1,8 @@
-import { useMemo } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
 import type { EnergyData } from "@/utils/energyData";
 
 interface VirtualBatteryChartProps {
   data: EnergyData;
-  showPublicCharging: boolean;
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -21,31 +19,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const VirtualBatteryChart = ({ data, showPublicCharging }: VirtualBatteryChartProps) => {
-  // Recalculate stored energy excluding public charging if needed
-  const chartData = useMemo(() => {
-    if (showPublicCharging) {
-      return data;
-    }
-    
-    // Recalculate storedEnergy without publicCharging
-    let storedEnergy = data[0]?.storedEnergy || 0;
-    return data.map((entry, index) => {
-      if (index === 0) {
-        return entry;
-      }
-      
-      const prevStored = index > 0 ? data[index - 1].storedEnergy : entry.storedEnergy;
-      const netExcess = entry.excessProduction + entry.excessConsumption; // Exclude publicCharging
-      storedEnergy = Math.max(0, prevStored + netExcess);
-      
-      return {
-        ...entry,
-        storedEnergy: parseFloat(storedEnergy.toFixed(2))
-      };
-    });
-  }, [data, showPublicCharging]);
-
+export const VirtualBatteryChart = ({ data }: VirtualBatteryChartProps) => {
   return (
     <div className="space-y-4">
       <div>
@@ -56,7 +30,7 @@ export const VirtualBatteryChart = ({ data, showPublicCharging }: VirtualBattery
       <div className="h-[350px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            data={chartData}
+            data={data}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="0" stroke="hsl(var(--chart-grid))" vertical={false} />
