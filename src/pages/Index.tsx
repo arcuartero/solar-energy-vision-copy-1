@@ -24,27 +24,27 @@ const Index = () => {
         <div className="flex-1 flex flex-col w-full">
           <Header />
       <div className="container mx-auto px-6 py-6 max-w-[1600px]">
+        {/* Header Section - Outside Card */}
+        <div className="mb-6">
+          <h1 className="text-4xl font-bold text-foreground mb-3">Enovos Energy Cloud</h1>
+          <p className="text-muted-foreground text-base">Monitor your solar energy production and virtual battery status</p>
+        </div>
+
         {/* Main Card Container */}
         <div className="bg-card rounded-lg shadow-sm p-8 border border-border/30">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-start justify-between gap-8">
-              <div className="flex-1">
-                <h1 className="text-4xl font-bold text-foreground mb-3">Enovos Energy Cloud</h1>
-                <p className="text-muted-foreground text-base">Monitor your solar energy production and virtual battery status</p>
-              </div>
-              <ToggleGroup type="single" value={viewType} onValueChange={(value) => value && setViewType(value as any)} className="shrink-0">
-                <ToggleGroupItem value="daily" aria-label="Daily view" className="px-6">
-                  Daily
-                </ToggleGroupItem>
-                <ToggleGroupItem value="weekly" aria-label="Weekly view" className="px-6">
-                  Weekly
-                </ToggleGroupItem>
-                <ToggleGroupItem value="monthly" aria-label="Monthly view" className="px-6">
-                  Monthly
-                </ToggleGroupItem>
-              </ToggleGroup>
-            </div>
+          {/* Date Picker */}
+          <div className="flex justify-end mb-6">
+            <ToggleGroup type="single" value={viewType} onValueChange={(value) => value && setViewType(value as any)}>
+              <ToggleGroupItem value="daily" aria-label="Daily view" className="px-6">
+                Daily
+              </ToggleGroupItem>
+              <ToggleGroupItem value="weekly" aria-label="Weekly view" className="px-6">
+                Weekly
+              </ToggleGroupItem>
+              <ToggleGroupItem value="monthly" aria-label="Monthly view" className="px-6">
+                Monthly
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
 
           {/* Main Grid Layout */}
