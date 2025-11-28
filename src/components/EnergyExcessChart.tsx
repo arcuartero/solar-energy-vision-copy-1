@@ -15,7 +15,7 @@ interface EnergyExcessChartProps {
 export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
 
   return (
-    <div className="space-y-4">
+    <div className="bg-card rounded-lg shadow-sm p-6 border border-border/50 space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-foreground">Excess Production & Consumption</h3>

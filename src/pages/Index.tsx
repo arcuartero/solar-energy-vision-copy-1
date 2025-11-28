@@ -84,11 +84,11 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column - Charts */}
             <div className="lg:col-span-8">
-              <div className="bg-card rounded-lg shadow-sm p-6 space-y-6">
-                <EnergyExcessChart data={energyData} />
-                
-                <VirtualBatteryChart data={energyData} />
-              </div>
+            <div className="bg-card rounded-lg shadow-sm p-6 space-y-6">
+              <EnergyExcessChart data={energyData} />
+              
+              <VirtualBatteryChart data={energyData} />
+            </div>
             </div>
 
             {/* Right Column - Battery Info */}
