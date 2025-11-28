@@ -6,6 +6,9 @@ import { RealTimeValueCard } from "@/components/RealTimeValueCard";
 import { SavingsCard } from "@/components/SavingsCard";
 import { generateEnergyData } from "@/utils/energyData";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import { Header } from "@/components/Header";
 
 const Index = () => {
   const [viewType, setViewType] = useState<"daily" | "weekly" | "monthly">("daily");
@@ -15,7 +18,11 @@ const Index = () => {
   const energyData = useMemo(() => generateEnergyData(viewType), [viewType]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <SidebarProvider defaultOpen={true}>
+      <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar />
+        <div className="flex-1 flex flex-col w-full">
+          <Header />
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
@@ -67,8 +74,10 @@ const Index = () => {
             <SavingsCard data={energyData} />
           </div>
         </div>
+        </div>
       </div>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
