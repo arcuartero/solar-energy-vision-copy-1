@@ -1,68 +1,69 @@
 import { Zap } from "lucide-react";
-import type { EnergyData } from "@/utils/energyData";
+import { useState, useEffect } from "react";
+import { loadFinancialData, FinancialDataRow } from "@/utils/loadFinancialData";
+import { isWithinInterval } from "date-fns";
+
 interface RealTimeValueCardProps {
-  data: EnergyData;
+  viewType: "daily" | "weekly" | "monthly" | "custom";
+  dateRange: {
+    from: Date | undefined;
+    to: Date | undefined;
+  };
 }
 
-// Conversion rates based on time of day and day of week
-const getConversionRate = (hour: number) => {
-  const now = new Date();
-  const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
-  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-
-  // Peak hours (17:00-24:00 every day): +6% more expensive
-  if (hour >= 17) {
-    return {
-      rate: 1.06,
-      label: "Peak Hours",
-      color: "text-chart-charging"
-    };
+// Calculate total energy charged from financial data
+const calculateTotalEnergyCharged = (
+  financialData: FinancialDataRow[],
+  dateRange: { from: Date | undefined; to: Date | undefined }
+): number => {
+  if (!dateRange.from || !dateRange.to || financialData.length === 0) {
+    return 0;
   }
 
-  // Off-peak hours (-25% cheaper):
-  // Weekdays: 00:00-06:00
-  // Weekends: 00:00-06:00 AND 12:00-17:00
-  if (isWeekend) {
-    if (hour < 6 || hour >= 12 && hour < 17) {
-      return {
-        rate: 0.75,
-        label: "Off-Peak Hours",
-        color: "text-chart-production"
-      };
-    }
-  } else {
-    if (hour < 6) {
-      return {
-        rate: 0.75,
-        label: "Off-Peak Hours",
-        color: "text-chart-production"
-      };
-    }
-  }
+  // Filter data based on date range
+  const filteredData = financialData.filter((row) => {
+    // Parse month_year (format: "2024-01")
+    const [year, month] = row.month_year.split('-');
+    const rowDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+    
+    return isWithinInterval(rowDate, {
+      start: dateRange.from!,
+      end: dateRange.to!
+    });
+  });
 
-  // Normal hours (standard price 0%):
-  // Weekdays: 06:00-17:00
-  // Weekends: 06:00-12:00
-  return {
-    rate: 1.0,
-    label: "Normal Hours",
-    color: "text-chart-consumption"
-  };
+  // Sum energy_charged_kwh
+  const totalEnergyCharged = filteredData.reduce((sum, row) => sum + row.energy_charged_kwh, 0);
+  
+  return totalEnergyCharged;
 };
-export const RealTimeValueCard = ({
-  data
-}: RealTimeValueCardProps) => {
-  const latestData = data[data.length - 1];
-  const storedEnergy = latestData?.storedEnergy || 0;
 
-  // Get current hour from the latest data time
-  const currentHour = new Date().getHours();
-  const {
-    rate,
-    label,
-    color
-  } = getConversionRate(currentHour);
-  const actualValue = storedEnergy * rate;
+export const RealTimeValueCard = ({
+  viewType,
+  dateRange
+}: RealTimeValueCardProps) => {
+  const [financialData, setFinancialData] = useState<FinancialDataRow[]>([]);
+  const [totalEnergyCharged, setTotalEnergyCharged] = useState<number>(0);
+
+  useEffect(() => {
+    loadFinancialData().then(setFinancialData);
+  }, []);
+
+  useEffect(() => {
+    if (financialData.length > 0) {
+      const energyCharged = calculateTotalEnergyCharged(financialData, dateRange);
+      setTotalEnergyCharged(energyCharged);
+    }
+  }, [financialData, dateRange]);
+
+  const displayLabel = viewType === "custom" 
+    ? "Custom Range" 
+    : viewType === "monthly" 
+    ? "Monthly" 
+    : viewType === "weekly"
+    ? "Weekly"
+    : "Daily";
+
   return <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50 h-fit">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-medium text-muted-foreground">Additional self consumption</h3>
@@ -73,9 +74,11 @@ export const RealTimeValueCard = ({
 
       <div className="space-y-2 mb-6">
         <div className="text-4xl font-bold text-foreground">
-          {actualValue.toFixed(2)} kWh
+          {totalEnergyCharged.toFixed(2)} kWh
         </div>
-        
+        <p className="text-sm text-muted-foreground mt-2">
+          Total energy charged in selected period
+        </p>
       </div>
 
       <div className="space-y-4">

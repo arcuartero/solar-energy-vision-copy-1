@@ -2,8 +2,13 @@ import * as XLSX from 'xlsx';
 
 export interface FinancialDataRow {
   month_year: string;
-  loss_not_injecting_euros: number;
+  injection_price_cents_kwh: number;
+  energy_charged_kwh: number;
+  energy_discharged_kwh: number;
+  battery_end_state_kwh: number;
+  stored_value_euros: number;
   stored_value_variation_euros: number;
+  loss_not_injecting_euros: number;
   gain_not_drawing_euros: number;
   total_gain_euros: number;
 }
