@@ -29,20 +29,20 @@ export function AppSidebar() {
     <Sidebar className="border-r border-border w-72" collapsible="icon">
       <SidebarContent className="flex flex-col h-full">
         {/* Logo at top */}
-        <div className="p-4 flex items-center justify-start">
-          <img src={enovoLogo} alt="Enovo" className="h-12 w-auto" />
+        <div className="p-6 flex items-center justify-start">
+          <img src={enovoLogo} alt="Enovo" className="h-16 w-auto" />
         </div>
 
         {/* Menu items */}
-        <div className="flex-1 px-3">
-          <SidebarMenu className="space-y-3">
+        <div className="flex-1 px-4">
+          <SidebarMenu className="space-y-4">
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild tooltip={item.title}>
                   <NavLink
                     to={item.url}
                     end
-                    className="flex items-center gap-3 py-4 px-4 rounded-lg text-muted-foreground hover:bg-orange-50 hover:text-orange-600 transition-colors text-base"
+                    className="flex items-center gap-3 py-5 px-5 rounded-lg text-muted-foreground hover:bg-orange-50 hover:text-orange-600 transition-colors text-base"
                     activeClassName="bg-orange-50 text-orange-600 font-medium"
                   >
                     <item.icon className="h-6 w-6 flex-shrink-0" />
