@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { EnergyData } from "@/utils/energyData";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { loadFinancialData, FinancialDataRow } from "@/utils/loadFinancialData";
 
 interface FinancialBreakdownChartProps {
   data: EnergyData;
@@ -35,50 +36,45 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) => {
   const [monthsToShow, setMonthsToShow] = useState<3 | 6 | 12>(12);
+  const [rawData, setRawData] = useState<FinancialDataRow[]>([]);
   
-  // Price per kWh in euros
-  const pricePerKWh = 0.30;
-  const monthlyFee = 10; // Fixed monthly fee per month
+  const monthlyFee = -10; // Fixed monthly fee per month
+
+  useEffect(() => {
+    loadFinancialData().then(setRawData);
+  }, []);
 
   const financialData = useMemo(() => {
-    // Generate data for the selected number of months
-    const now = new Date();
-    const months = [];
+    if (rawData.length === 0) return [];
     
-    for (let i = monthsToShow - 1; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    // Get the last N months of data
+    const slicedData = rawData.slice(-monthsToShow);
+    
+    return slicedData.map((row) => {
+      // Format the month_year (e.g., "2024-01" to "Jan 2024")
+      const [year, month] = row.month_year.split('-');
+      const date = new Date(parseInt(year), parseInt(month) - 1, 1);
       const monthName = date.toLocaleDateString('en-US', { month: 'short' });
-      const year = date.getFullYear();
-      months.push(`${monthName} ${year}`);
-    }
-    
-    return months.map((month, i) => {
-      // Generate monthly data with seasonal patterns
-      const seasonalFactor = Math.sin((i / 12) * Math.PI * 2) * 0.3 + 0.7;
-      const excessProduction = (Math.random() * 200 + 150) * seasonalFactor;
-      const excessConsumption = (Math.random() * 150 + 100) * seasonalFactor;
+      const formattedMonth = `${monthName} ${year}`;
       
-      // Loss: excess consumption (energy we need to draw from grid)
-      const loss = -excessConsumption * pricePerKWh;
+      // Loss: from loss_not_injecting_euros column (already negative in data)
+      const loss = row.loss_not_injecting_euros;
       
-      // Gain: excess production (energy we don't draw + stored value)
-      const gain = excessProduction * pricePerKWh;
+      // Gain: stored_value_variation_euros + gain_not_drawing_euros
+      const gain = row.stored_value_variation_euros + row.gain_not_drawing_euros;
       
-      // Monthly fee
-      const fee = -monthlyFee;
-      
-      // Total gain/loss
-      const totalGain = gain + loss + fee;
+      // Total gain: from total_gain_euros column
+      const totalGain = row.total_gain_euros;
 
       return {
-        time: month,
+        time: formattedMonth,
         loss: loss,
         gain: gain,
-        monthlyFee: fee,
+        monthlyFee: monthlyFee,
         totalGain: totalGain,
       };
     });
-  }, [monthsToShow]);
+  }, [monthsToShow, rawData]);
 
   return (
     <div className="w-full bg-card rounded-lg shadow-sm p-6 border border-border/50">
