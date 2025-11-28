@@ -30,7 +30,7 @@ const Index = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-3xl font-bold text-foreground mb-2">Enovos Energy Wallet</h1>
+                <h1 className="text-3xl font-bold text-foreground mb-2">Enovos Energy Cloud</h1>
                 <p className="text-muted-foreground">Monitor your solar energy production and virtual battery status</p>
               </div>
               <ToggleGroup type="single" value={viewType} onValueChange={(value) => value && setViewType(value as any)}>
