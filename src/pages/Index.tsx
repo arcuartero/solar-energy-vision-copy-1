@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { EnergyExcessChart } from "@/components/EnergyExcessChart";
 import { VirtualBatteryChart } from "@/components/VirtualBatteryChart";
+import { FinancialBreakdownChart } from "@/components/FinancialBreakdownChart";
 import { BatteryInfoCard } from "@/components/BatteryInfoCard";
 import { RealTimeValueCard } from "@/components/RealTimeValueCard";
 import { SavingsCard } from "@/components/SavingsCard";
@@ -69,6 +70,13 @@ const Index = () => {
             <BatteryInfoCard data={energyData} viewType={viewType} />
             <RealTimeValueCard data={energyData} />
             <SavingsCard data={energyData} />
+          </div>
+        </div>
+
+        {/* Financial Breakdown Section */}
+        <div className="mt-6">
+          <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
+            <FinancialBreakdownChart data={energyData} viewType={viewType} />
           </div>
         </div>
         </div>
