@@ -1,6 +1,7 @@
 import { LayoutGrid, BarChart3, Coins, Folder, FileText, ChevronLeft, ExternalLink } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import logo from "@/assets/logo.svg";
+import saveEnergyLogo from "@/assets/save-energy-logo.png";
 
 import {
   Sidebar,
@@ -61,7 +62,7 @@ export function AppSidebar() {
             rel="noopener noreferrer"
             className="flex items-center gap-3 py-3 px-3 rounded-lg text-orange-600 font-medium hover:bg-orange-50 transition-colors"
           >
-            <img src={logo} alt="EnergyWallet" className="h-5 w-5 flex-shrink-0" />
+            <img src={saveEnergyLogo} alt="Save Energy" className="h-8 w-8 flex-shrink-0 rounded-full" />
             {open && (
               <>
                 <span className="text-sm flex-1">Save energy</span>
