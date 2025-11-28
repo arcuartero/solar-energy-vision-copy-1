@@ -1,15 +1,15 @@
 import { useMemo, useState, useEffect } from "react";
-import { EnergyExcessChart } from "@/components/EnergyExcessChart";
+import { EnergyExcessChart, type ExcessChartData } from "@/components/EnergyExcessChart";
 import { VirtualBatteryChart } from "@/components/VirtualBatteryChart";
 import { FinancialBreakdownChart } from "@/components/FinancialBreakdownChart";
 import { BatteryInfoCard } from "@/components/BatteryInfoCard";
 import { RealTimeValueCard } from "@/components/RealTimeValueCard";
 import { SavingsCard } from "@/components/SavingsCard";
 import { generateEnergyData } from "@/utils/energyData";
+import { loadVirtualBatteryData, type VirtualBatteryDataRow } from "@/utils/loadVirtualBatteryData";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
-import { Calendar } from "@/components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -29,9 +29,57 @@ const Index = () => {
   const [batteryCharge, setBatteryCharge] = useState(0);
   const [isCharged, setIsCharged] = useState(false);
   const [isSubscriptionActive, setIsSubscriptionActive] = useState(false);
+  const [virtualBatteryRawData, setVirtualBatteryRawData] = useState<VirtualBatteryDataRow[]>([]);
+
+  // Load virtual battery data
+  useEffect(() => {
+    loadVirtualBatteryData().then(setVirtualBatteryRawData);
+  }, []);
 
   // Generate connected data based on view type
   const energyData = useMemo(() => generateEnergyData(viewType), [viewType]);
+
+  // Process virtual battery data for the chart
+  const excessChartData = useMemo<ExcessChartData[]>(() => {
+    if (virtualBatteryRawData.length === 0) return [];
+    
+    // Filter by selected year
+    const filteredData = virtualBatteryRawData.filter(
+      (row) => row.year === parseInt(selectedYear)
+    );
+    
+    // Aggregate by month
+    const monthlyData = new Map<string, { excessProd: number; excessCons: number; count: number }>();
+    
+    filteredData.forEach((row) => {
+      const date = new Date(row.timestamp);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (!monthlyData.has(monthKey)) {
+        monthlyData.set(monthKey, { excessProd: 0, excessCons: 0, count: 0 });
+      }
+      
+      const monthData = monthlyData.get(monthKey)!;
+      monthData.excessProd += row.excessprod;
+      monthData.excessCons += row.excesscons;
+      monthData.count += 1;
+    });
+    
+    // Convert to chart format
+    return Array.from(monthlyData.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([monthKey, data]) => {
+        const [year, month] = monthKey.split('-');
+        const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+        const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+        
+        return {
+          time: monthName,
+          excessProduction: data.excessProd,
+          excessConsumption: data.excessCons,
+        };
+      });
+  }, [virtualBatteryRawData, selectedYear]);
 
   // Battery charging animation
   useEffect(() => {
@@ -117,7 +165,7 @@ const Index = () => {
             {/* Left Column - Charts */}
             <div className="lg:col-span-8">
             <div className="bg-card rounded-lg shadow-sm p-6 space-y-6">
-              <EnergyExcessChart data={energyData} />
+              <EnergyExcessChart data={excessChartData} />
               
               <VirtualBatteryChart data={energyData} />
             </div>
