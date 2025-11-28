@@ -24,33 +24,33 @@ const Index = () => {
         <div className="flex-1 flex flex-col w-full">
           <Header />
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Enovos Energy Wallet</h1>
-              <p className="text-muted-foreground">Monitor your solar energy production and virtual battery status</p>
+        {/* Main Card Container */}
+        <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
+          {/* Header */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-3xl font-bold text-foreground mb-2">Enovos Energy Wallet</h1>
+                <p className="text-muted-foreground">Monitor your solar energy production and virtual battery status</p>
+              </div>
+              <ToggleGroup type="single" value={viewType} onValueChange={(value) => value && setViewType(value as any)}>
+                <ToggleGroupItem value="daily" aria-label="Daily view">
+                  Daily
+                </ToggleGroupItem>
+                <ToggleGroupItem value="weekly" aria-label="Weekly view">
+                  Weekly
+                </ToggleGroupItem>
+                <ToggleGroupItem value="monthly" aria-label="Monthly view">
+                  Monthly
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
-            <ToggleGroup type="single" value={viewType} onValueChange={(value) => value && setViewType(value as any)}>
-              <ToggleGroupItem value="daily" aria-label="Daily view">
-                Daily
-              </ToggleGroupItem>
-              <ToggleGroupItem value="weekly" aria-label="Weekly view">
-                Weekly
-              </ToggleGroupItem>
-              <ToggleGroupItem value="monthly" aria-label="Monthly view">
-                Monthly
-              </ToggleGroupItem>
-            </ToggleGroup>
           </div>
-        </div>
 
-        {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Charts */}
-          <div className="lg:col-span-2">
-            {/* Combined Charts Card */}
-            <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50 space-y-8">
+          {/* Main Grid Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            {/* Left Column - Charts */}
+            <div className="lg:col-span-2 space-y-8">
               <EnergyExcessChart 
                 data={energyData} 
               />
@@ -59,19 +59,17 @@ const Index = () => {
                 data={energyData} 
               />
             </div>
+
+            {/* Right Column - Battery Info */}
+            <div className="lg:col-span-1 space-y-6">
+              <BatteryInfoCard data={energyData} viewType={viewType} />
+              <RealTimeValueCard data={energyData} />
+              <SavingsCard data={energyData} />
+            </div>
           </div>
 
-          {/* Right Column - Battery Info */}
-          <div className="lg:col-span-1 space-y-6">
-            <BatteryInfoCard data={energyData} viewType={viewType} />
-            <RealTimeValueCard data={energyData} />
-            <SavingsCard data={energyData} />
-          </div>
-        </div>
-
-        {/* Financial Breakdown Section */}
-        <div className="mt-6">
-          <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
+          {/* Financial Breakdown Section */}
+          <div className="border-t border-border/50 pt-6">
             <FinancialBreakdownChart data={energyData} />
           </div>
         </div>
