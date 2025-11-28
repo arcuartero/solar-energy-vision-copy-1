@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -11,6 +11,7 @@ import {
   ReferenceLine,
 } from "recharts";
 import { EnergyData } from "@/utils/energyData";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface FinancialBreakdownChartProps {
   data: EnergyData;
@@ -33,16 +34,18 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) => {
+  const [monthsToShow, setMonthsToShow] = useState<3 | 6 | 12>(12);
+  
   // Price per kWh in euros
   const pricePerKWh = 0.30;
   const monthlyFee = 10; // Fixed monthly fee per month
 
   const financialData = useMemo(() => {
-    // Generate last 12 months from current date
+    // Generate data for the selected number of months
     const now = new Date();
     const months = [];
     
-    for (let i = 11; i >= 0; i--) {
+    for (let i = monthsToShow - 1; i >= 0; i--) {
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthName = date.toLocaleDateString('en-US', { month: 'short' });
       const year = date.getFullYear();
@@ -75,17 +78,32 @@ export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) 
         totalGain: totalGain,
       };
     });
-  }, []);
+  }, [monthsToShow]);
 
   return (
     <div className="w-full">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-foreground mb-2">
-          Monthly Financial Breakdown - Last 12 Months
-        </h2>
-        <p className="text-muted-foreground text-sm">
-          Financial impact of your energy usage and production throughout the year
-        </p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-bold text-foreground mb-2">
+              Monthly Financial Breakdown - Last {monthsToShow} Months
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Financial impact of your energy usage and production throughout the year
+            </p>
+          </div>
+          <ToggleGroup type="single" value={monthsToShow.toString()} onValueChange={(value) => value && setMonthsToShow(Number(value) as 3 | 6 | 12)}>
+            <ToggleGroupItem value="3" aria-label="Last 3 months">
+              3 months
+            </ToggleGroupItem>
+            <ToggleGroupItem value="6" aria-label="Last 6 months">
+              6 months
+            </ToggleGroupItem>
+            <ToggleGroupItem value="12" aria-label="Last 12 months">
+              12 months
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
       </div>
       
       <ResponsiveContainer width="100%" height={400}>
