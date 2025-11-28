@@ -119,11 +119,11 @@ const Index = () => {
             </div>
           </div>
 
-        </div>
+          {/* Financial Breakdown Section */}
+          <div className="mt-6">
+            <FinancialBreakdownChart data={energyData} />
+          </div>
 
-        {/* Financial Breakdown Section */}
-        <div className="mt-6 bg-card rounded-lg shadow-sm p-8 border border-border/30">
-          <FinancialBreakdownChart data={energyData} />
         </div>
         </div>
       </div>
