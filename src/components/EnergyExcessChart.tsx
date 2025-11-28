@@ -1,15 +1,14 @@
-import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, Tooltip } from "recharts";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import type { EnergyData } from "@/utils/energyData";
+
+export interface ExcessChartData {
+  time: string;
+  excessProduction: number;
+  excessConsumption: number;
+}
 
 interface EnergyExcessChartProps {
-  data: EnergyData;
+  data: ExcessChartData[];
 }
 
 export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
