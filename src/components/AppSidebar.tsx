@@ -1,6 +1,6 @@
 import { LayoutGrid, BarChart3, Coins, Folder, FileText, ChevronLeft, ExternalLink } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import logo from "@/assets/logo.svg";
+import enovoLogo from "@/assets/enovo-logo.svg";
 import saveEnergyLogo from "@/assets/save-energy-logo.png";
 
 import {
@@ -30,7 +30,7 @@ export function AppSidebar() {
       <SidebarContent className="flex flex-col h-full">
         {/* Logo at top */}
         <div className="p-4 flex items-center justify-center">
-          <img src={logo} alt="Logo" className="h-12 w-12" />
+          <img src={enovoLogo} alt="Enovo" className="h-8 w-auto" />
         </div>
 
         {/* Menu items */}
