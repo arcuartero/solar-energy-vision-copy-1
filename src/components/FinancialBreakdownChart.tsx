@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { EnergyData } from "@/utils/energyData";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import * as XLSX from 'xlsx';
 
 interface FinancialBreakdownChartProps {
   data: EnergyData;
@@ -35,50 +36,59 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) => {
   const [monthsToShow, setMonthsToShow] = useState<3 | 6 | 12>(12);
+  const [xlsxData, setXlsxData] = useState<any[]>([]);
   
-  // Price per kWh in euros
-  const pricePerKWh = 0.30;
   const monthlyFee = 10; // Fixed monthly fee per month
 
+  // Load XLSX data
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const response = await fetch('/src/data/monthly_summary_all_years.xlsx');
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+        setXlsxData(jsonData);
+      } catch (error) {
+        console.error('Error loading XLSX data:', error);
+      }
+    };
+    loadData();
+  }, []);
+
   const financialData = useMemo(() => {
-    // Generate data for the selected number of months
-    const now = new Date();
-    const months = [];
+    if (xlsxData.length === 0) return [];
     
-    for (let i = monthsToShow - 1; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    // Get the last N months from the data
+    const sortedData = [...xlsxData].sort((a: any, b: any) => 
+      a.month_year.localeCompare(b.month_year)
+    );
+    
+    const lastMonths = sortedData.slice(-monthsToShow);
+    
+    return lastMonths.map((row: any) => {
+      // Parse month_year (format: "YYYY-MM")
+      const [year, month] = row.month_year.split('-');
+      const date = new Date(parseInt(year), parseInt(month) - 1);
       const monthName = date.toLocaleDateString('en-US', { month: 'short' });
-      const year = date.getFullYear();
-      months.push(`${monthName} ${year}`);
-    }
-    
-    return months.map((month, i) => {
-      // Generate monthly data with seasonal patterns
-      const seasonalFactor = Math.sin((i / 12) * Math.PI * 2) * 0.3 + 0.7;
-      const excessProduction = (Math.random() * 200 + 150) * seasonalFactor;
-      const excessConsumption = (Math.random() * 150 + 100) * seasonalFactor;
+      const formattedMonth = `${monthName} ${year}`;
       
-      // Loss: excess consumption (energy we need to draw from grid)
-      const loss = -excessConsumption * pricePerKWh;
-      
-      // Gain: excess production (energy we don't draw + stored value)
-      const gain = excessProduction * pricePerKWh;
-      
-      // Monthly fee
+      // Calculate values according to specifications
+      const loss = row.loss_not_injecting_euros || 0;
+      const gain = (row.stored_value_variation_euros || 0) + (row.gain_not_drawing_euros || 0);
       const fee = -monthlyFee;
-      
-      // Total gain/loss
-      const totalGain = gain + loss + fee;
+      const totalGain = row.total_gain_euros || 0;
 
       return {
-        time: month,
+        time: formattedMonth,
         loss: loss,
         gain: gain,
         monthlyFee: fee,
         totalGain: totalGain,
       };
     });
-  }, [monthsToShow]);
+  }, [xlsxData, monthsToShow]);
 
   return (
     <div className="w-full bg-card rounded-lg shadow-sm p-6 border border-border/50">
