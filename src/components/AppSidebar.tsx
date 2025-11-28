@@ -2,6 +2,7 @@ import { LayoutGrid, BarChart3, Coins, Folder, FileText, ChevronLeft, ExternalLi
 import { NavLink } from "@/components/NavLink";
 import enovoLogo from "@/assets/enovo-logo.svg";
 import saveEnergyLogo from "@/assets/save-energy-logo.png";
+import energyCloudLogo from "@/assets/energy-cloud-logo.png";
 
 import {
   Sidebar,
@@ -13,13 +14,18 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const menuItems = [
+const menuItems: Array<{
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string }> | string;
+  isImage?: boolean;
+}> = [
   { title: "Overview", url: "/overview", icon: LayoutGrid },
   { title: "Consumption", url: "/consumption", icon: BarChart3 },
   { title: "Costs", url: "/costs", icon: Coins },
   { title: "Payments", url: "/payments", icon: Folder },
   { title: "Contract details", url: "/contract-details", icon: FileText },
-  { title: "Energy Cloud", url: "/", icon: LayoutGrid },
+  { title: "Energy Cloud", url: "/", icon: energyCloudLogo, isImage: true },
 ];
 
 export function AppSidebar() {
@@ -45,7 +51,11 @@ export function AppSidebar() {
                     className="flex items-center gap-3 py-5 px-5 rounded-lg text-muted-foreground hover:bg-orange-50 hover:text-orange-600 transition-colors text-base"
                     activeClassName="bg-orange-50 text-orange-600 font-medium"
                   >
-                    <item.icon className="h-6 w-6 flex-shrink-0" />
+                    {item.isImage ? (
+                      <img src={item.icon as string} alt={item.title} className="h-6 w-6 flex-shrink-0" />
+                    ) : (
+                      <item.icon className="h-6 w-6 flex-shrink-0" />
+                    )}
                     {open && <span className="text-base">{item.title}</span>}
                   </NavLink>
                 </SidebarMenuButton>
