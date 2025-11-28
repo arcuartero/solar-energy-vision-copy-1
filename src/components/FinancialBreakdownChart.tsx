@@ -11,11 +11,14 @@ import {
   ReferenceLine,
 } from "recharts";
 import { EnergyData } from "@/utils/energyData";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import * as XLSX from 'xlsx';
 
 interface FinancialBreakdownChartProps {
   data: EnergyData;
+  dateRange: {
+    from: Date | undefined;
+    to: Date | undefined;
+  };
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -34,8 +37,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) => {
-  const [monthsToShow, setMonthsToShow] = useState<3 | 6 | 12>(12);
+export const FinancialBreakdownChart = ({ data, dateRange }: FinancialBreakdownChartProps) => {
   const [xlsxData, setXlsxData] = useState<any[]>([]);
   
   const monthlyFee = 10; // Fixed monthly fee per month
@@ -58,16 +60,20 @@ export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) 
   }, []);
 
   const financialData = useMemo(() => {
-    if (xlsxData.length === 0) return [];
+    if (xlsxData.length === 0 || !dateRange.from || !dateRange.to) return [];
     
-    // Get the last N months from the data
-    const sortedData = [...xlsxData].sort((a: any, b: any) => 
+    // Filter data based on date range
+    const filteredData = xlsxData.filter((row: any) => {
+      const [year, month] = row.month_year.split('-');
+      const rowDate = new Date(parseInt(year), parseInt(month) - 1);
+      return rowDate >= dateRange.from! && rowDate <= dateRange.to!;
+    });
+    
+    const sortedData = [...filteredData].sort((a: any, b: any) => 
       a.month_year.localeCompare(b.month_year)
     );
     
-    const lastMonths = sortedData.slice(-monthsToShow);
-    
-    return lastMonths.map((row: any) => {
+    return sortedData.map((row: any) => {
       // Parse month_year (format: "YYYY-MM")
       const [year, month] = row.month_year.split('-');
       const date = new Date(parseInt(year), parseInt(month) - 1);
@@ -88,31 +94,18 @@ export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) 
         totalGain: totalGain,
       };
     });
-  }, [xlsxData, monthsToShow]);
+  }, [xlsxData, dateRange]);
 
   return (
     <div className="w-full bg-card rounded-lg shadow-sm p-6 border border-border/50">
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-xl font-bold text-foreground mb-2">
-              Monthly Financial Breakdown - Last {monthsToShow} Months
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              Financial impact of your energy usage and production throughout the year
-            </p>
-          </div>
-          <ToggleGroup type="single" value={monthsToShow.toString()} onValueChange={(value) => value && setMonthsToShow(Number(value) as 3 | 6 | 12)}>
-            <ToggleGroupItem value="3" aria-label="Last 3 months">
-              3 months
-            </ToggleGroupItem>
-            <ToggleGroupItem value="6" aria-label="Last 6 months">
-              6 months
-            </ToggleGroupItem>
-            <ToggleGroupItem value="12" aria-label="Last 12 months">
-              12 months
-            </ToggleGroupItem>
-          </ToggleGroup>
+        <div>
+          <h2 className="text-xl font-bold text-foreground mb-2">
+            Monthly Financial Breakdown
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            Financial impact of your energy usage and production based on selected date range
+          </p>
         </div>
       </div>
       
