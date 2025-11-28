@@ -76,7 +76,7 @@ const Index = () => {
         {/* Financial Breakdown Section */}
         <div className="mt-6">
           <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
-            <FinancialBreakdownChart data={energyData} viewType={viewType} />
+            <FinancialBreakdownChart data={energyData} />
           </div>
         </div>
         </div>
