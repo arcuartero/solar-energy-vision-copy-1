@@ -33,7 +33,7 @@ export const BatteryInfoCard = ({ data, viewType }: BatteryInfoCardProps) => {
         <div className="text-4xl font-bold text-foreground">
           {storedEnergy.toFixed(2)} kWh
         </div>
-        <p className="text-sm text-muted-foreground">Energy not self-consumed</p>
+        <p className="text-sm text-muted-foreground">Total energy stored</p>
       </div>
 
       <div className="space-y-4">
