@@ -32,8 +32,8 @@ All colors MUST be HSL.
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
+    --border: 0 0% 82%;
+    --input: 0 0% 82%;
     --ring: 27 100% 50%;
 
     --radius: 0.75rem;
@@ -89,8 +89,8 @@ All colors MUST be HSL.
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 25%;
-    --input: 0 0% 25%;
+    --border: 0 0% 32%;
+    --input: 0 0% 32%;
     --ring: 27 100% 50%;
     
     --chart-grid: 0 0% 22%;

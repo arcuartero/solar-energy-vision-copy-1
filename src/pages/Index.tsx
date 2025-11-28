@@ -85,7 +85,7 @@ const Index = () => {
             {/* Left Column - Charts */}
             <div className="lg:col-span-8">
             <div className="bg-card rounded-lg shadow-sm p-6 space-y-6">
-              <EnergyExcessChart data={energyData} className="pt-0 pb-0 py-[25px]" />
+              <EnergyExcessChart data={energyData} />
               
               <VirtualBatteryChart data={energyData} />
             </div>
@@ -93,7 +93,7 @@ const Index = () => {
 
             {/* Right Column - Battery Info */}
             <div className="lg:col-span-4 space-y-4">
-              <RealTimeValueCard data={energyData} className="mt-[24px]" />
+              <RealTimeValueCard data={energyData} />
               <BatteryInfoCard data={energyData} viewType={viewType} />
               <SavingsCard data={energyData} />
             </div>
