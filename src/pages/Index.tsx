@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { EnergyExcessChart } from "@/components/EnergyExcessChart";
 import { VirtualBatteryChart } from "@/components/VirtualBatteryChart";
 import { FinancialBreakdownChart } from "@/components/FinancialBreakdownChart";
@@ -13,6 +13,7 @@ import { Header } from "@/components/Header";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { CalendarIcon } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -25,9 +26,31 @@ const Index = () => {
     from: subDays(new Date(), 365),
     to: new Date()
   });
+  const [isSubscribeDialogOpen, setIsSubscribeDialogOpen] = useState(false);
+  const [batteryCharge, setBatteryCharge] = useState(0);
+  const [isCharged, setIsCharged] = useState(false);
 
   // Generate connected data based on view type
   const energyData = useMemo(() => generateEnergyData(viewType), [viewType]);
+
+  // Battery charging animation
+  useEffect(() => {
+    if (isSubscribeDialogOpen && batteryCharge < 100) {
+      const timer = setTimeout(() => {
+        setBatteryCharge(prev => Math.min(prev + 2, 100));
+      }, 30);
+      return () => clearTimeout(timer);
+    }
+    if (batteryCharge === 100 && !isCharged) {
+      setTimeout(() => setIsCharged(true), 300);
+    }
+  }, [isSubscribeDialogOpen, batteryCharge, isCharged]);
+
+  const handleSubscribeClick = () => {
+    setBatteryCharge(0);
+    setIsCharged(false);
+    setIsSubscribeDialogOpen(true);
+  };
   return <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
@@ -40,7 +63,10 @@ const Index = () => {
             <h1 className="text-4xl font-bold text-foreground mb-3">Enovos Energy Cloud</h1>
             <p className="text-muted-foreground text-base">Monitor your solar energy production and virtual battery status</p>
           </div>
-          <Button className="bg-orange-600 hover:bg-orange-700 text-white font-medium">
+          <Button 
+            className="bg-orange-600 hover:bg-orange-700 text-white font-medium"
+            onClick={handleSubscribeClick}
+          >
             Subscribe now
           </Button>
         </div>
@@ -113,6 +139,40 @@ const Index = () => {
         </div>
       </div>
       </div>
+
+      {/* Subscribe Dialog */}
+      <Dialog open={isSubscribeDialogOpen} onOpenChange={setIsSubscribeDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <div className="flex flex-col items-center justify-center py-8 space-y-6">
+            {!isCharged ? (
+              <>
+                <div className="relative w-32 h-48">
+                  {/* Battery outline */}
+                  <div className="absolute inset-0 border-4 border-foreground rounded-lg">
+                    {/* Battery tip */}
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-12 h-3 bg-foreground rounded-t"></div>
+                    {/* Battery fill */}
+                    <div 
+                      className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-orange-600 to-orange-400 rounded-b transition-all duration-300 ease-out"
+                      style={{ height: `${batteryCharge}%` }}
+                    ></div>
+                  </div>
+                </div>
+                <p className="text-2xl font-semibold text-foreground animate-pulse">
+                  Charging... {batteryCharge}%
+                </p>
+              </>
+            ) : (
+              <div className="text-center space-y-4 animate-scale-in">
+                <div className="text-6xl">⚡</div>
+                <p className="text-2xl font-bold text-foreground">
+                  Your energy cloud is ready.
+                </p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </SidebarProvider>;
 };
 export default Index;
