@@ -10,20 +10,20 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { CalendarIcon } from "lucide-react";
-import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
 const Index = () => {
   const [viewType] = useState<"daily" | "weekly" | "monthly" | "custom">("custom");
+  const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [dateRange, setDateRange] = useState<{
     from: Date | undefined;
     to: Date | undefined;
   }>({
-    from: subDays(new Date(), 365),
-    to: new Date()
+    from: new Date(2024, 0, 1),
+    to: new Date(2024, 11, 31)
   });
   const [isSubscribeDialogOpen, setIsSubscribeDialogOpen] = useState(false);
   const [batteryCharge, setBatteryCharge] = useState(0);
@@ -87,27 +87,29 @@ const Index = () => {
 
         {/* Main Card Container */}
         <div className="bg-card rounded-lg shadow-sm p-8 border border-border/30">
-          {/* Date Picker */}
+          {/* Year Selector */}
           <div className="flex justify-end mb-6">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className={cn("px-6 justify-start text-left font-normal", !dateRange.from && "text-muted-foreground")}>
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange.from ? dateRange.to ? <>
-                        {format(dateRange.from, "LLL dd, y")} -{" "}
-                        {format(dateRange.to, "LLL dd, y")}
-                      </> : format(dateRange.from, "LLL dd, y") : <span>Custom range</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <Calendar mode="range" selected={dateRange} onSelect={range => {
-                    setDateRange({
-                      from: range?.from,
-                      to: range?.to
-                    });
-                  }} numberOfMonths={2} initialFocus className={cn("p-3 pointer-events-auto")} />
-              </PopoverContent>
-            </Popover>
+            <Select 
+              value={selectedYear} 
+              onValueChange={(year) => {
+                setSelectedYear(year);
+                setDateRange({
+                  from: new Date(parseInt(year), 0, 1),
+                  to: new Date(parseInt(year), 11, 31)
+                });
+              }}
+            >
+              <SelectTrigger className="w-[180px]">
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Select year" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2022">2022</SelectItem>
+                <SelectItem value="2023">2023</SelectItem>
+                <SelectItem value="2024">2024</SelectItem>
+                <SelectItem value="2025">2025</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Main Grid Layout */}
