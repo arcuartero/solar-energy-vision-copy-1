@@ -38,7 +38,16 @@ export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) 
   const monthlyFee = 10; // Fixed monthly fee per month
 
   const financialData = useMemo(() => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    // Generate last 12 months from current date
+    const now = new Date();
+    const months = [];
+    
+    for (let i = 11; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+      const year = date.getFullYear();
+      months.push(`${monthName} ${year}`);
+    }
     
     return months.map((month, i) => {
       // Generate monthly data with seasonal patterns
@@ -72,7 +81,7 @@ export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) 
     <div className="w-full">
       <div className="mb-6">
         <h2 className="text-xl font-bold text-foreground mb-2">
-          Monthly Financial Breakdown - 2024
+          Monthly Financial Breakdown - Last 12 Months
         </h2>
         <p className="text-muted-foreground text-sm">
           Financial impact of your energy usage and production throughout the year
