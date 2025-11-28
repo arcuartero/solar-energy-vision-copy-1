@@ -141,7 +141,7 @@ const Index = () => {
             <div className="lg:col-span-4 space-y-4">
               <RealTimeValueCard data={energyData} />
               <BatteryInfoCard data={energyData} viewType={viewType} />
-              <SavingsCard data={energyData} />
+              <SavingsCard viewType={viewType} dateRange={dateRange} />
             </div>
           </div>
 

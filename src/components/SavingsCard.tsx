@@ -1,50 +1,72 @@
 import { Euro } from "lucide-react";
-import type { EnergyData } from "@/utils/energyData";
+import { useState, useEffect } from "react";
+import { loadFinancialData, FinancialDataRow } from "@/utils/loadFinancialData";
+import { isWithinInterval } from "date-fns";
+import { cn } from "@/lib/utils";
+
 interface SavingsCardProps {
-  data: EnergyData;
+  viewType: "daily" | "weekly" | "monthly" | "custom";
+  dateRange: {
+    from: Date | undefined;
+    to: Date | undefined;
+  };
 }
 
-// Calculate savings breakdown over the period
-const calculateSavings = (data: EnergyData) => {
-  // Base electricity price (€/kWh)
-  const basePrice = 0.25;
-  let offPeakSavings = 0;
-  let peakAvoidanceSavings = 0;
-  let virtualBatterySavings = 0;
-  data.forEach(entry => {
-    const storedEnergy = entry.storedEnergy || 0;
-    const hour = new Date(entry.time).getHours();
-    const dayOfWeek = new Date(entry.time).getDay();
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    const normalCost = storedEnergy * basePrice;
+// Calculate total savings from financial data
+const calculateTotalSavings = (
+  financialData: FinancialDataRow[],
+  dateRange: { from: Date | undefined; to: Date | undefined }
+): number => {
+  if (!dateRange.from || !dateRange.to || financialData.length === 0) {
+    return 0;
+  }
 
-    // Off-peak storage savings (-25%)
-    if (isWeekend && (hour < 6 || hour >= 12 && hour < 17) || !isWeekend && hour < 6) {
-      offPeakSavings += normalCost * 0.25;
-    }
-
-    // Peak avoidance savings (+6% avoided)
-    if (hour >= 17) {
-      peakAvoidanceSavings += normalCost * 0.06;
-    }
-
-    // Virtual battery optimization (additional 3% efficiency)
-    virtualBatterySavings += normalCost * 0.03;
+  // Filter data based on date range
+  const filteredData = financialData.filter((row) => {
+    // Parse month_year (format: "2024-01")
+    const [year, month] = row.month_year.split('-');
+    const rowDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+    
+    return isWithinInterval(rowDate, {
+      start: dateRange.from!,
+      end: dateRange.to!
+    });
   });
-  return {
-    offPeakSavings,
-    peakAvoidanceSavings,
-    virtualBatterySavings,
-    total: offPeakSavings + peakAvoidanceSavings + virtualBatterySavings
-  };
+
+  // Sum total_gain_euros
+  const totalSavings = filteredData.reduce((sum, row) => sum + row.total_gain_euros, 0);
+  
+  return totalSavings;
 };
 export const SavingsCard = ({
-  data
+  viewType,
+  dateRange
 }: SavingsCardProps) => {
-  const savings = calculateSavings(data);
+  const [financialData, setFinancialData] = useState<FinancialDataRow[]>([]);
+  const [totalSavings, setTotalSavings] = useState<number>(0);
+
+  useEffect(() => {
+    loadFinancialData().then(setFinancialData);
+  }, []);
+
+  useEffect(() => {
+    if (financialData.length > 0) {
+      const savings = calculateTotalSavings(financialData, dateRange);
+      setTotalSavings(savings);
+    }
+  }, [financialData, dateRange]);
+
+  const displayLabel = viewType === "custom" 
+    ? "Custom Range Savings" 
+    : viewType === "monthly" 
+    ? "Monthly Savings" 
+    : viewType === "weekly"
+    ? "Weekly Savings"
+    : "Daily Savings";
+
   return <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50 h-fit">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-medium text-muted-foreground">30-Day Savings</h3>
+        <h3 className="text-lg font-medium text-muted-foreground">{displayLabel}</h3>
         <div className="w-12 h-12 rounded-full bg-chart-production/10 flex items-center justify-center">
           <Euro className="w-6 h-6 text-chart-production" />
         </div>
@@ -57,10 +79,15 @@ export const SavingsCard = ({
       </div>
 
       <div className="pt-4 py-0">
-        <div className="text-4xl font-bold text-chart-production">
-          €{savings.total.toFixed(2)}
+        <div className={cn(
+          "text-4xl font-bold",
+          totalSavings >= 0 ? "text-chart-production" : "text-chart-loss"
+        )}>
+          €{totalSavings.toFixed(2)}
         </div>
-        <p className="text-sm text-muted-foreground mt-2">Total saved in last 30 days</p>
+        <p className="text-sm text-muted-foreground mt-2">
+          Total {totalSavings >= 0 ? "saved" : "loss"} in selected period
+        </p>
       </div>
     </div>;
 };
