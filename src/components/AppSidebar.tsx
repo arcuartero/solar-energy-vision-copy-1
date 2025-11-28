@@ -13,11 +13,12 @@ import {
 } from "@/components/ui/sidebar";
 
 const menuItems = [
-  { title: "Overview", url: "/", icon: LayoutGrid },
+  { title: "Overview", url: "/overview", icon: LayoutGrid },
   { title: "Consumption", url: "/consumption", icon: BarChart3 },
   { title: "Costs", url: "/costs", icon: Coins },
   { title: "Payments", url: "/payments", icon: Folder },
   { title: "Contract details", url: "/contract-details", icon: FileText },
+  { title: "EnergyWallet", url: "/", icon: LayoutGrid },
 ];
 
 export function AppSidebar() {
