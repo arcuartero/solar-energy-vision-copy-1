@@ -44,10 +44,11 @@ const Index = () => {
   const excessChartData = useMemo<ExcessChartData[]>(() => {
     if (virtualBatteryRawData.length === 0) return [];
     
-    // Filter by selected year
-    let filteredData = virtualBatteryRawData.filter(
-      (row) => row.year === parseInt(selectedYear)
-    );
+    // Filter by selected year using timestamp
+    let filteredData = virtualBatteryRawData.filter((row) => {
+      const date = new Date(row.timestamp);
+      return date.getFullYear() === parseInt(selectedYear);
+    });
     
     // Filter by July 1st if checkbox is checked
     if (showJulyFirst) {
@@ -59,7 +60,7 @@ const Index = () => {
     
     // Aggregate by month or by hour if showing July 1st
     if (showJulyFirst) {
-      // Show hourly data for July 1st
+      // Show hourly data for July 1st using timestamp
       return filteredData.map((row) => {
         const date = new Date(row.timestamp);
         const time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -71,7 +72,7 @@ const Index = () => {
         };
       });
     } else {
-      // Aggregate by month
+      // Aggregate by month using timestamp
       const monthlyData = new Map<string, { excessProd: number; excessCons: number; count: number }>();
       
       filteredData.forEach((row) => {
@@ -88,7 +89,7 @@ const Index = () => {
         monthData.count += 1;
       });
       
-      // Convert to chart format
+      // Convert to chart format with timestamp-based month names
       return Array.from(monthlyData.entries())
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([monthKey, data]) => {
@@ -109,9 +110,11 @@ const Index = () => {
   const virtualBatteryData = useMemo(() => {
     if (virtualBatteryRawData.length === 0) return energyData;
     
-    let filteredData = virtualBatteryRawData.filter(
-      (row) => row.year === parseInt(selectedYear)
-    );
+    // Filter by selected year using timestamp
+    let filteredData = virtualBatteryRawData.filter((row) => {
+      const date = new Date(row.timestamp);
+      return date.getFullYear() === parseInt(selectedYear);
+    });
     
     // Filter by July 1st if checkbox is checked
     if (showJulyFirst) {
@@ -120,7 +123,7 @@ const Index = () => {
         return date.getMonth() === 6 && date.getDate() === 1;
       });
       
-      // Return hourly data
+      // Return hourly data using timestamp
       return filteredData.map((row) => {
         const date = new Date(row.timestamp);
         const time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -134,7 +137,7 @@ const Index = () => {
         };
       });
     } else {
-      // Aggregate by month
+      // Aggregate by month using timestamp
       const monthlyData = new Map<string, { battery: number; count: number }>();
       
       filteredData.forEach((row) => {
@@ -150,7 +153,7 @@ const Index = () => {
         monthData.count += 1;
       });
       
-      // Convert to chart format
+      // Convert to chart format with timestamp-based month names
       return Array.from(monthlyData.entries())
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([monthKey, data]) => {
