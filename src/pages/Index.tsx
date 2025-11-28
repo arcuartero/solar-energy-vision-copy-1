@@ -6,7 +6,6 @@ import { BatteryInfoCard } from "@/components/BatteryInfoCard";
 import { RealTimeValueCard } from "@/components/RealTimeValueCard";
 import { SavingsCard } from "@/components/SavingsCard";
 import { generateEnergyData } from "@/utils/energyData";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
@@ -18,7 +17,7 @@ import { CalendarIcon } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
 const Index = () => {
-  const [viewType, setViewType] = useState<"daily" | "weekly" | "monthly" | "custom">("daily");
+  const [viewType] = useState<"daily" | "weekly" | "monthly" | "custom">("custom");
   const [dateRange, setDateRange] = useState<{
     from: Date | undefined;
     to: Date | undefined;
@@ -89,19 +88,7 @@ const Index = () => {
         {/* Main Card Container */}
         <div className="bg-card rounded-lg shadow-sm p-8 border border-border/30">
           {/* Date Picker */}
-          <div className="flex justify-end mb-6 gap-3">
-            <ToggleGroup type="single" value={viewType} onValueChange={value => value && setViewType(value as any)}>
-              <ToggleGroupItem value="daily" aria-label="Daily view" className="px-6">
-                Daily
-              </ToggleGroupItem>
-              <ToggleGroupItem value="weekly" aria-label="Weekly view" className="px-6">
-                Weekly
-              </ToggleGroupItem>
-              <ToggleGroupItem value="monthly" aria-label="Monthly view" className="px-6">
-                Monthly
-              </ToggleGroupItem>
-            </ToggleGroup>
-
+          <div className="flex justify-end mb-6">
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className={cn("px-6 justify-start text-left font-normal", !dateRange.from && "text-muted-foreground")}>
@@ -118,9 +105,6 @@ const Index = () => {
                       from: range?.from,
                       to: range?.to
                     });
-                    if (range?.from && range?.to) {
-                      setViewType("custom");
-                    }
                   }} numberOfMonths={2} initialFocus className={cn("p-3 pointer-events-auto")} />
               </PopoverContent>
             </Popover>
