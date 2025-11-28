@@ -1,5 +1,4 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, Tooltip } from "recharts";
-import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
 export interface ExcessChartData {
@@ -10,11 +9,9 @@ export interface ExcessChartData {
 
 interface EnergyExcessChartProps {
   data: ExcessChartData[];
-  showJulyFirst: boolean;
-  onShowJulyFirstChange: (checked: boolean) => void;
 }
 
-export const EnergyExcessChart = ({ data, showJulyFirst, onShowJulyFirstChange }: EnergyExcessChartProps) => {
+export const EnergyExcessChart = ({ data }: EnergyExcessChartProps) => {
 
   return (
     <div className="bg-card rounded-lg shadow-sm p-6 border border-border/50 space-y-4">
@@ -22,19 +19,6 @@ export const EnergyExcessChart = ({ data, showJulyFirst, onShowJulyFirstChange }
         <div>
           <h3 className="text-lg font-semibold text-foreground">Excess Production & Consumption</h3>
           <p className="text-sm text-muted-foreground">Energy balance over time</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Checkbox 
-            id="july-first"
-            checked={showJulyFirst}
-            onCheckedChange={(checked) => onShowJulyFirstChange(checked === true)}
-          />
-          <label 
-            htmlFor="july-first" 
-            className="text-sm text-muted-foreground cursor-pointer select-none"
-          >
-            Show July 1st only
-          </label>
         </div>
       </div>
 

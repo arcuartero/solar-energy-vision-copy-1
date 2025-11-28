@@ -30,7 +30,6 @@ const Index = () => {
   const [isCharged, setIsCharged] = useState(false);
   const [isSubscriptionActive, setIsSubscriptionActive] = useState(false);
   const [virtualBatteryRawData, setVirtualBatteryRawData] = useState<VirtualBatteryDataRow[]>([]);
-  const [showJulyFirst, setShowJulyFirst] = useState(false);
 
   // Load virtual battery data
   useEffect(() => {
@@ -45,129 +44,42 @@ const Index = () => {
     if (virtualBatteryRawData.length === 0) return [];
     
     // Filter by selected year
-    let filteredData = virtualBatteryRawData.filter(
+    const filteredData = virtualBatteryRawData.filter(
       (row) => row.year === parseInt(selectedYear)
     );
     
-    // Filter by July 1st if checkbox is checked
-    if (showJulyFirst) {
-      filteredData = filteredData.filter((row) => {
-        const date = new Date(row.timestamp);
-        return date.getMonth() === 6 && date.getDate() === 1; // July (month 6) and day 1
-      });
-    }
+    // Aggregate by month
+    const monthlyData = new Map<string, { excessProd: number; excessCons: number; count: number }>();
     
-    // Aggregate by month or by hour if showing July 1st
-    if (showJulyFirst) {
-      // Show hourly data for July 1st
-      return filteredData.map((row) => {
-        const date = new Date(row.timestamp);
-        const time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+    filteredData.forEach((row) => {
+      const date = new Date(row.timestamp);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (!monthlyData.has(monthKey)) {
+        monthlyData.set(monthKey, { excessProd: 0, excessCons: 0, count: 0 });
+      }
+      
+      const monthData = monthlyData.get(monthKey)!;
+      monthData.excessProd += row.excessprod;
+      monthData.excessCons += row.excesscons;
+      monthData.count += 1;
+    });
+    
+    // Convert to chart format
+    return Array.from(monthlyData.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([monthKey, data]) => {
+        const [year, month] = monthKey.split('-');
+        const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+        const monthName = date.toLocaleDateString('en-US', { month: 'short' });
         
         return {
-          time,
-          excessProduction: row.excessprod,
-          excessConsumption: row.excesscons,
+          time: monthName,
+          excessProduction: data.excessProd,
+          excessConsumption: data.excessCons,
         };
       });
-    } else {
-      // Aggregate by month
-      const monthlyData = new Map<string, { excessProd: number; excessCons: number; count: number }>();
-      
-      filteredData.forEach((row) => {
-        const date = new Date(row.timestamp);
-        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        
-        if (!monthlyData.has(monthKey)) {
-          monthlyData.set(monthKey, { excessProd: 0, excessCons: 0, count: 0 });
-        }
-        
-        const monthData = monthlyData.get(monthKey)!;
-        monthData.excessProd += row.excessprod;
-        monthData.excessCons += row.excesscons;
-        monthData.count += 1;
-      });
-      
-      // Convert to chart format
-      return Array.from(monthlyData.entries())
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([monthKey, data]) => {
-          const [year, month] = monthKey.split('-');
-          const date = new Date(parseInt(year), parseInt(month) - 1, 1);
-          const monthName = date.toLocaleDateString('en-US', { month: 'short' });
-          
-          return {
-            time: monthName,
-            excessProduction: data.excessProd,
-            excessConsumption: data.excessCons,
-          };
-        });
-    }
-  }, [virtualBatteryRawData, selectedYear, showJulyFirst]);
-  
-  // Process data for Virtual Battery chart
-  const virtualBatteryData = useMemo(() => {
-    if (virtualBatteryRawData.length === 0) return energyData;
-    
-    let filteredData = virtualBatteryRawData.filter(
-      (row) => row.year === parseInt(selectedYear)
-    );
-    
-    // Filter by July 1st if checkbox is checked
-    if (showJulyFirst) {
-      filteredData = filteredData.filter((row) => {
-        const date = new Date(row.timestamp);
-        return date.getMonth() === 6 && date.getDate() === 1;
-      });
-      
-      // Return hourly data
-      return filteredData.map((row) => {
-        const date = new Date(row.timestamp);
-        const time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-        
-        return {
-          time,
-          excessProduction: row.excessprod,
-          excessConsumption: row.excesscons,
-          publicCharging: 0,
-          storedEnergy: row.battery,
-        };
-      });
-    } else {
-      // Aggregate by month
-      const monthlyData = new Map<string, { battery: number; count: number }>();
-      
-      filteredData.forEach((row) => {
-        const date = new Date(row.timestamp);
-        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        
-        if (!monthlyData.has(monthKey)) {
-          monthlyData.set(monthKey, { battery: 0, count: 0 });
-        }
-        
-        const monthData = monthlyData.get(monthKey)!;
-        monthData.battery += row.battery;
-        monthData.count += 1;
-      });
-      
-      // Convert to chart format
-      return Array.from(monthlyData.entries())
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([monthKey, data]) => {
-          const [year, month] = monthKey.split('-');
-          const date = new Date(parseInt(year), parseInt(month) - 1, 1);
-          const monthName = date.toLocaleDateString('en-US', { month: 'short' });
-          
-          return {
-            time: monthName,
-            excessProduction: 0,
-            excessConsumption: 0,
-            publicCharging: 0,
-            storedEnergy: data.battery / data.count, // Average battery level for the month
-          };
-        });
-    }
-  }, [virtualBatteryRawData, selectedYear, showJulyFirst, energyData]);
+  }, [virtualBatteryRawData, selectedYear]);
 
   // Battery charging animation
   useEffect(() => {
@@ -253,13 +165,9 @@ const Index = () => {
             {/* Left Column - Charts */}
             <div className="lg:col-span-8">
             <div className="bg-card rounded-lg shadow-sm p-6 space-y-6">
-              <EnergyExcessChart 
-                data={excessChartData} 
-                showJulyFirst={showJulyFirst}
-                onShowJulyFirstChange={setShowJulyFirst}
-              />
+              <EnergyExcessChart data={excessChartData} />
               
-              <VirtualBatteryChart data={virtualBatteryData} />
+              <VirtualBatteryChart data={energyData} />
             </div>
             </div>
 
