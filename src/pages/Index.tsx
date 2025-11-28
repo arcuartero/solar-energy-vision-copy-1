@@ -147,7 +147,7 @@ const Index = () => {
 
           {/* Financial Breakdown Section */}
           <div className="mt-6">
-            <FinancialBreakdownChart data={energyData} dateRange={dateRange} />
+            <FinancialBreakdownChart data={energyData} />
           </div>
 
         </div>

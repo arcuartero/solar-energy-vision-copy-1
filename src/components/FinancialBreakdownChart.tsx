@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -11,14 +11,10 @@ import {
   ReferenceLine,
 } from "recharts";
 import { EnergyData } from "@/utils/energyData";
-import * as XLSX from 'xlsx';
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface FinancialBreakdownChartProps {
   data: EnergyData;
-  dateRange: {
-    from: Date | undefined;
-    to: Date | undefined;
-  };
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -37,75 +33,76 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const FinancialBreakdownChart = ({ data, dateRange }: FinancialBreakdownChartProps) => {
-  const [xlsxData, setXlsxData] = useState<any[]>([]);
+export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) => {
+  const [monthsToShow, setMonthsToShow] = useState<3 | 6 | 12>(12);
   
+  // Price per kWh in euros
+  const pricePerKWh = 0.30;
   const monthlyFee = 10; // Fixed monthly fee per month
 
-  // Load XLSX data
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const response = await fetch('/src/data/monthly_summary_all_years.xlsx');
-        const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-        setXlsxData(jsonData);
-      } catch (error) {
-        console.error('Error loading XLSX data:', error);
-      }
-    };
-    loadData();
-  }, []);
-
   const financialData = useMemo(() => {
-    if (xlsxData.length === 0 || !dateRange.from || !dateRange.to) return [];
+    // Generate data for the selected number of months
+    const now = new Date();
+    const months = [];
     
-    // Filter data based on date range
-    const filteredData = xlsxData.filter((row: any) => {
-      const [year, month] = row.month_year.split('-');
-      const rowDate = new Date(parseInt(year), parseInt(month) - 1);
-      return rowDate >= dateRange.from! && rowDate <= dateRange.to!;
-    });
-    
-    const sortedData = [...filteredData].sort((a: any, b: any) => 
-      a.month_year.localeCompare(b.month_year)
-    );
-    
-    return sortedData.map((row: any) => {
-      // Parse month_year (format: "YYYY-MM")
-      const [year, month] = row.month_year.split('-');
-      const date = new Date(parseInt(year), parseInt(month) - 1);
+    for (let i = monthsToShow - 1; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthName = date.toLocaleDateString('en-US', { month: 'short' });
-      const formattedMonth = `${monthName} ${year}`;
+      const year = date.getFullYear();
+      months.push(`${monthName} ${year}`);
+    }
+    
+    return months.map((month, i) => {
+      // Generate monthly data with seasonal patterns
+      const seasonalFactor = Math.sin((i / 12) * Math.PI * 2) * 0.3 + 0.7;
+      const excessProduction = (Math.random() * 200 + 150) * seasonalFactor;
+      const excessConsumption = (Math.random() * 150 + 100) * seasonalFactor;
       
-      // Calculate values according to specifications
-      const loss = row.loss_not_injecting_euros || 0;
-      const gain = (row.stored_value_variation_euros || 0) + (row.gain_not_drawing_euros || 0);
+      // Loss: excess consumption (energy we need to draw from grid)
+      const loss = -excessConsumption * pricePerKWh;
+      
+      // Gain: excess production (energy we don't draw + stored value)
+      const gain = excessProduction * pricePerKWh;
+      
+      // Monthly fee
       const fee = -monthlyFee;
-      const totalGain = row.total_gain_euros || 0;
+      
+      // Total gain/loss
+      const totalGain = gain + loss + fee;
 
       return {
-        time: formattedMonth,
+        time: month,
         loss: loss,
         gain: gain,
         monthlyFee: fee,
         totalGain: totalGain,
       };
     });
-  }, [xlsxData, dateRange]);
+  }, [monthsToShow]);
 
   return (
     <div className="w-full bg-card rounded-lg shadow-sm p-6 border border-border/50">
       <div className="mb-6">
-        <div>
-          <h2 className="text-xl font-bold text-foreground mb-2">
-            Monthly Financial Breakdown
-          </h2>
-          <p className="text-muted-foreground text-sm">
-            Financial impact of your energy usage and production based on selected date range
-          </p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-bold text-foreground mb-2">
+              Monthly Financial Breakdown - Last {monthsToShow} Months
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Financial impact of your energy usage and production throughout the year
+            </p>
+          </div>
+          <ToggleGroup type="single" value={monthsToShow.toString()} onValueChange={(value) => value && setMonthsToShow(Number(value) as 3 | 6 | 12)}>
+            <ToggleGroupItem value="3" aria-label="Last 3 months">
+              3 months
+            </ToggleGroupItem>
+            <ToggleGroupItem value="6" aria-label="Last 6 months">
+              6 months
+            </ToggleGroupItem>
+            <ToggleGroupItem value="12" aria-label="Last 12 months">
+              12 months
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
       </div>
       
