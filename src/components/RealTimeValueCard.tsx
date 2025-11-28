@@ -48,7 +48,7 @@ export const RealTimeValueCard = ({ data }: RealTimeValueCardProps) => {
   return (
     <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50 h-fit">
       <div className="flex items-start justify-between mb-6">
-        <h3 className="text-lg font-medium text-muted-foreground">Real-Time Value</h3>
+        <h3 className="text-lg font-medium text-muted-foreground">Additional self consumption</h3>
         <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
           <Zap className="w-6 h-6 text-accent" />
         </div>
