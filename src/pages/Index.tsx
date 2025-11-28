@@ -62,8 +62,8 @@ const Index = () => {
 
             {/* Right Column - Battery Info */}
             <div className="lg:col-span-4 space-y-4">
-              <BatteryInfoCard data={energyData} viewType={viewType} />
               <RealTimeValueCard data={energyData} />
+              <BatteryInfoCard data={energyData} viewType={viewType} />
               <SavingsCard data={energyData} />
             </div>
           </div>
