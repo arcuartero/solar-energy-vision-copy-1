@@ -98,35 +98,39 @@ export const FinancialBreakdownChart = ({ data, viewType }: FinancialBreakdownCh
           />
           <ReferenceLine y={0} stroke="hsl(var(--foreground))" strokeWidth={1} />
           
-          {/* Loss (not injecting) - Red bars below zero */}
+          {/* Loss (not injecting) - Bordeaux bars below zero */}
           <Bar
             dataKey="loss"
-            fill="hsl(0, 84%, 60%)"
+            fill="hsl(0, 63%, 31%)"
             name="Loss (not injecting)"
             stackId="stack"
+            radius={[8, 8, 0, 0]}
           />
           
-          {/* Gain (not drawing + stored value) - Green bars above zero */}
+          {/* Gain (not drawing + stored value) - Blue bars above zero */}
           <Bar
             dataKey="gain"
-            fill="hsl(142, 76%, 36%)"
+            fill="hsl(217, 91%, 60%)"
             name="Gain (not drawing + stored value)"
             stackId="stack"
+            radius={[8, 8, 0, 0]}
           />
           
-          {/* Monthly fee - Gray bars below zero */}
+          {/* Monthly fee - Orange bars below zero */}
           <Bar
             dataKey="monthlyFee"
-            fill="hsl(var(--muted))"
+            fill="hsl(25, 95%, 53%)"
             name="Monthly fee"
             stackId="stack"
+            radius={[8, 8, 0, 0]}
           />
           
-          {/* Total gain - Blue bars */}
+          {/* Total gain - Green bars */}
           <Bar
             dataKey="totalGain"
-            fill="hsl(221, 83%, 53%)"
+            fill="hsl(142, 76%, 36%)"
             name="Total gain"
+            radius={[8, 8, 0, 0]}
           />
         </BarChart>
       </ResponsiveContainer>
