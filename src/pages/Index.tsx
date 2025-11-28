@@ -45,7 +45,6 @@ const Index = () => {
       setTimeout(() => setIsCharged(true), 300);
     }
   }, [isSubscribeDialogOpen, batteryCharge, isCharged]);
-
   const handleSubscribeClick = () => {
     if (!isSubscriptionActive) {
       setBatteryCharge(0);
@@ -53,7 +52,6 @@ const Index = () => {
       setIsSubscribeDialogOpen(true);
     }
   };
-
   const handleDialogClose = (open: boolean) => {
     setIsSubscribeDialogOpen(open);
     if (!open && isCharged) {
@@ -72,15 +70,7 @@ const Index = () => {
             <h1 className="text-4xl font-bold text-foreground mb-3">Enovos Energy Cloud</h1>
             <p className="text-muted-foreground text-base">Monitor your solar energy production and virtual battery status</p>
           </div>
-          <Button 
-            className={cn(
-              "font-medium",
-              isSubscriptionActive 
-                ? "bg-green-600 hover:bg-green-600 text-white cursor-default" 
-                : "bg-orange-600 hover:bg-orange-700 text-white"
-            )}
-            onClick={handleSubscribeClick}
-          >
+          <Button className={cn("font-medium", isSubscriptionActive ? "bg-green-600 hover:bg-green-600 text-white cursor-default" : "bg-orange-600 hover:bg-orange-700 text-white")} onClick={handleSubscribeClick}>
             {isSubscriptionActive ? "Energy Cloud subscription active" : "Subscribe now"}
           </Button>
         </div>
@@ -89,16 +79,13 @@ const Index = () => {
         <div className="bg-card rounded-lg shadow-sm p-8 border border-border/30">
           {/* Year Selector */}
           <div className="flex justify-end mb-6">
-            <Select 
-              value={selectedYear} 
-              onValueChange={(year) => {
+            <Select value={selectedYear} onValueChange={year => {
                 setSelectedYear(year);
                 setDateRange({
                   from: new Date(parseInt(year), 0, 1),
                   to: new Date(parseInt(year), 11, 31)
                 });
-              }}
-            >
+              }}>
               <SelectTrigger className="w-[180px]">
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Select year" />
@@ -126,7 +113,7 @@ const Index = () => {
             {/* Right Column - Battery Info */}
             <div className="lg:col-span-4 space-y-4">
               <RealTimeValueCard viewType={viewType} dateRange={dateRange} />
-              <BatteryInfoCard data={energyData} viewType={viewType} />
+              
               <SavingsCard viewType={viewType} dateRange={dateRange} />
             </div>
           </div>
@@ -145,32 +132,27 @@ const Index = () => {
       <Dialog open={isSubscribeDialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="sm:max-w-md">
           <div className="flex flex-col items-center justify-center py-8 space-y-6">
-            {!isCharged ? (
-              <>
+            {!isCharged ? <>
                 <div className="relative w-32 h-48">
                   {/* Battery outline */}
                   <div className="absolute inset-0 border-4 border-foreground rounded-lg">
                     {/* Battery tip */}
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-12 h-3 bg-foreground rounded-t"></div>
                     {/* Battery fill */}
-                    <div 
-                      className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-orange-600 to-orange-400 rounded-b transition-all duration-300 ease-out"
-                      style={{ height: `${batteryCharge}%` }}
-                    ></div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-orange-600 to-orange-400 rounded-b transition-all duration-300 ease-out" style={{
+                  height: `${batteryCharge}%`
+                }}></div>
                   </div>
                 </div>
                 <p className="text-2xl font-semibold text-foreground animate-pulse">
                   Charging... {batteryCharge}%
                 </p>
-              </>
-            ) : (
-              <div className="text-center space-y-4 animate-scale-in">
+              </> : <div className="text-center space-y-4 animate-scale-in">
                 <div className="text-6xl">⚡</div>
                 <p className="text-2xl font-bold text-foreground">
                   Your energy cloud is ready.
                 </p>
-              </div>
-            )}
+              </div>}
           </div>
         </DialogContent>
       </Dialog>
