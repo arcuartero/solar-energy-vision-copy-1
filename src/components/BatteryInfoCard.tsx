@@ -22,7 +22,7 @@ export const BatteryInfoCard = ({ data, viewType }: BatteryInfoCardProps) => {
 
   return (
     <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50 h-fit">
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-medium text-muted-foreground">Virtual Battery</h3>
         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
           <Battery className="w-6 h-6 text-primary" />
