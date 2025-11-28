@@ -35,9 +35,14 @@ const Index = () => {
           <Header />
       <div className="container mx-auto px-6 py-6 max-w-[1600px]">
         {/* Header Section - Outside Card */}
-        <div className="mb-6">
-          <h1 className="text-4xl font-bold text-foreground mb-3">Enovos Energy Cloud</h1>
-          <p className="text-muted-foreground text-base">Monitor your solar energy production and virtual battery status</p>
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-3">Enovos Energy Cloud</h1>
+            <p className="text-muted-foreground text-base">Monitor your solar energy production and virtual battery status</p>
+          </div>
+          <Button className="bg-orange-600 hover:bg-orange-700 text-white font-medium">
+            Subscribe now
+          </Button>
         </div>
 
         {/* Main Card Container */}
