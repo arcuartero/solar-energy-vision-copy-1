@@ -85,9 +85,9 @@ const Index = () => {
             {/* Left Column - Charts */}
             <div className="lg:col-span-8">
               <div className="bg-card rounded-lg shadow-sm p-6 border border-border/50 space-y-6">
-                <EnergyExcessChart data={energyData} className="border-0 border-none border-black/0 rounded-none shadow-none opacity-100" />
+                <EnergyExcessChart data={energyData} className="border-0 border-none border-black/0 rounded-none shadow-none opacity-100 my-[26px]" />
                 
-                <VirtualBatteryChart data={energyData} className="rounded-none shadow-none border-none border-0" />
+                <VirtualBatteryChart data={energyData} className="rounded-none shadow-none border-none border-0 my-[23px]" />
               </div>
             </div>
 
