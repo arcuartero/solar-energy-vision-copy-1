@@ -1,6 +1,6 @@
 import { LayoutGrid, BarChart3, PieChart, Folder, FileText, ChevronRight } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import sunLogo from "@/assets/sun-logo.png";
+import logo from "@/assets/logo.svg";
 
 import {
   Sidebar,
@@ -28,7 +28,7 @@ export function AppSidebar() {
       <SidebarContent className="flex flex-col h-full">
         {/* Logo at top */}
         <div className="p-4 flex items-center justify-center">
-          <img src={sunLogo} alt="Logo" className="h-10 w-10" />
+          <img src={logo} alt="Logo" className="h-12 w-12" />
         </div>
 
         {/* Menu items */}
