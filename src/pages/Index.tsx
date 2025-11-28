@@ -133,7 +133,7 @@ const Index = () => {
 
           {/* Financial Breakdown Section */}
           <div className="mt-6">
-            <FinancialBreakdownChart data={energyData} />
+            <FinancialBreakdownChart data={energyData} selectedYear={selectedYear} />
           </div>
 
         </div>

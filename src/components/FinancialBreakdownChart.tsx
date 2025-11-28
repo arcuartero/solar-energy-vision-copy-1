@@ -15,6 +15,7 @@ import { loadFinancialData, FinancialDataRow } from "@/utils/loadFinancialData";
 
 interface FinancialBreakdownChartProps {
   data: EnergyData;
+  selectedYear: string;
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -33,7 +34,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) => {
+export const FinancialBreakdownChart = ({ data, selectedYear }: FinancialBreakdownChartProps) => {
   const [monthsToShow] = useState<3 | 6 | 12>(12);
   const [rawData, setRawData] = useState<FinancialDataRow[]>([]);
   
@@ -46,10 +47,13 @@ export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) 
   const financialData = useMemo(() => {
     if (rawData.length === 0) return [];
     
-    // Get the last N months of data
-    const slicedData = rawData.slice(-monthsToShow);
+    // Filter data by selected year
+    const filteredData = rawData.filter((row) => {
+      const [year] = row.month_year.split('-');
+      return year === selectedYear;
+    });
     
-    return slicedData.map((row) => {
+    return filteredData.map((row) => {
       // Format the month_year (e.g., "2024-01" to "Jan 2024")
       const [year, month] = row.month_year.split('-');
       const date = new Date(parseInt(year), parseInt(month) - 1, 1);
@@ -73,14 +77,14 @@ export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) 
         totalGain: totalGain,
       };
     });
-  }, [monthsToShow, rawData]);
+  }, [selectedYear, rawData]);
 
   return (
     <div className="w-full bg-card rounded-lg shadow-sm p-6 border border-border/50">
       <div className="mb-6">
         <div className="mb-4">
           <h2 className="text-xl font-bold text-foreground mb-2">
-            Monthly Financial Breakdown - Last {monthsToShow} Months
+            Monthly Financial Breakdown - {selectedYear}
           </h2>
           <p className="text-muted-foreground text-sm">
             Financial impact of your energy usage and production throughout the year
