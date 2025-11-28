@@ -87,7 +87,7 @@ const Index = () => {
               <div className="bg-card rounded-lg shadow-sm p-6 border border-border/50 space-y-6">
                 <EnergyExcessChart data={energyData} className="border-0 border-none border-black/0 rounded-none shadow-none opacity-100" />
                 
-                <VirtualBatteryChart data={energyData} />
+                <VirtualBatteryChart data={energyData} className="rounded-none shadow-none border-none border-0" />
               </div>
             </div>
 
