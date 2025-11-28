@@ -1,12 +1,8 @@
 import { Truck, HelpCircle, User, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export const Header = () => {
   return (
     <header className="h-16 border-b border-border bg-background flex items-center justify-end px-6 gap-8">
-      <Button className="bg-orange-600 hover:bg-orange-700 text-white font-medium">
-        Subscribe now
-      </Button>
       <button className="flex items-center gap-2 text-sm text-foreground hover:text-muted-foreground transition-colors">
         <Truck className="h-5 w-5" />
         <span className="font-medium">I am moving</span>
