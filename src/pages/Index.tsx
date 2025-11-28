@@ -48,33 +48,33 @@ const Index = () => {
       (row) => row.year === parseInt(selectedYear)
     );
     
-    // Aggregate by day
-    const dailyData = new Map<string, { excessProd: number; excessCons: number; count: number }>();
+    // Aggregate by month
+    const monthlyData = new Map<string, { excessProd: number; excessCons: number; count: number }>();
     
     filteredData.forEach((row) => {
       const date = new Date(row.timestamp);
-      const dayKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       
-      if (!dailyData.has(dayKey)) {
-        dailyData.set(dayKey, { excessProd: 0, excessCons: 0, count: 0 });
+      if (!monthlyData.has(monthKey)) {
+        monthlyData.set(monthKey, { excessProd: 0, excessCons: 0, count: 0 });
       }
       
-      const dayData = dailyData.get(dayKey)!;
-      dayData.excessProd += row.excessprod;
-      dayData.excessCons += row.excesscons;
-      dayData.count += 1;
+      const monthData = monthlyData.get(monthKey)!;
+      monthData.excessProd += row.excessprod;
+      monthData.excessCons += row.excesscons;
+      monthData.count += 1;
     });
     
     // Convert to chart format
-    return Array.from(dailyData.entries())
+    return Array.from(monthlyData.entries())
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([dayKey, data]) => {
-        const [year, month, day] = dayKey.split('-');
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        const dateLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      .map(([monthKey, data]) => {
+        const [year, month] = monthKey.split('-');
+        const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+        const monthName = date.toLocaleDateString('en-US', { month: 'short' });
         
         return {
-          time: dateLabel,
+          time: monthName,
           excessProduction: data.excessProd,
           excessConsumption: data.excessCons,
         };
