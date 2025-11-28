@@ -19,7 +19,7 @@ const menuItems = [
   { title: "Costs", url: "/costs", icon: Coins },
   { title: "Payments", url: "/payments", icon: Folder },
   { title: "Contract details", url: "/contract-details", icon: FileText },
-  { title: "EnergyWallet", url: "/", icon: LayoutGrid },
+  { title: "Energy Cloud", url: "/", icon: LayoutGrid },
 ];
 
 export function AppSidebar() {
