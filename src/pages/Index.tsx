@@ -29,6 +29,7 @@ const Index = () => {
   const [isSubscribeDialogOpen, setIsSubscribeDialogOpen] = useState(false);
   const [batteryCharge, setBatteryCharge] = useState(0);
   const [isCharged, setIsCharged] = useState(false);
+  const [isSubscriptionActive, setIsSubscriptionActive] = useState(false);
 
   // Generate connected data based on view type
   const energyData = useMemo(() => generateEnergyData(viewType), [viewType]);
@@ -47,9 +48,18 @@ const Index = () => {
   }, [isSubscribeDialogOpen, batteryCharge, isCharged]);
 
   const handleSubscribeClick = () => {
-    setBatteryCharge(0);
-    setIsCharged(false);
-    setIsSubscribeDialogOpen(true);
+    if (!isSubscriptionActive) {
+      setBatteryCharge(0);
+      setIsCharged(false);
+      setIsSubscribeDialogOpen(true);
+    }
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    setIsSubscribeDialogOpen(open);
+    if (!open && isCharged) {
+      setIsSubscriptionActive(true);
+    }
   };
   return <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
@@ -64,10 +74,15 @@ const Index = () => {
             <p className="text-muted-foreground text-base">Monitor your solar energy production and virtual battery status</p>
           </div>
           <Button 
-            className="bg-orange-600 hover:bg-orange-700 text-white font-medium"
+            className={cn(
+              "font-medium",
+              isSubscriptionActive 
+                ? "bg-green-600 hover:bg-green-600 text-white cursor-default" 
+                : "bg-orange-600 hover:bg-orange-700 text-white"
+            )}
             onClick={handleSubscribeClick}
           >
-            Subscribe now
+            {isSubscriptionActive ? "Energy Cloud subscription active" : "Subscribe now"}
           </Button>
         </div>
 
@@ -141,7 +156,7 @@ const Index = () => {
       </div>
 
       {/* Subscribe Dialog */}
-      <Dialog open={isSubscribeDialogOpen} onOpenChange={setIsSubscribeDialogOpen}>
+      <Dialog open={isSubscribeDialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="sm:max-w-md">
           <div className="flex flex-col items-center justify-center py-8 space-y-6">
             {!isCharged ? (
