@@ -14,7 +14,6 @@ import { EnergyData } from "@/utils/energyData";
 
 interface FinancialBreakdownChartProps {
   data: EnergyData;
-  viewType: "daily" | "weekly" | "monthly";
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -33,43 +32,50 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const FinancialBreakdownChart = ({ data, viewType }: FinancialBreakdownChartProps) => {
+export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) => {
   // Price per kWh in euros
   const pricePerKWh = 0.30;
-  const monthlyFee = 10; // Fixed monthly fee
+  const monthlyFee = 10; // Fixed monthly fee per month
 
   const financialData = useMemo(() => {
-    return data.map((point) => {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    return months.map((month, i) => {
+      // Generate monthly data with seasonal patterns
+      const seasonalFactor = Math.sin((i / 12) * Math.PI * 2) * 0.3 + 0.7;
+      const excessProduction = (Math.random() * 200 + 150) * seasonalFactor;
+      const excessConsumption = (Math.random() * 150 + 100) * seasonalFactor;
+      
       // Loss: excess consumption (energy we need to draw from grid)
-      const loss = point.excessConsumption > 0 ? -point.excessConsumption * pricePerKWh : 0;
+      const loss = -excessConsumption * pricePerKWh;
       
       // Gain: excess production (energy we don't draw + stored value)
-      const gain = point.excessProduction > 0 ? point.excessProduction * pricePerKWh : 0;
+      const gain = excessProduction * pricePerKWh;
       
-      // Monthly fee (distributed across time periods)
-      const fee = viewType === "monthly" ? -monthlyFee : -monthlyFee / (viewType === "weekly" ? 4 : 30);
+      // Monthly fee
+      const fee = -monthlyFee;
       
       // Total gain/loss
       const totalGain = gain + loss + fee;
 
       return {
-        time: point.time,
+        time: month,
         loss: loss,
         gain: gain,
         monthlyFee: fee,
         totalGain: totalGain,
       };
     });
-  }, [data, viewType]);
+  }, []);
 
   return (
     <div className="w-full">
       <div className="mb-6">
         <h2 className="text-xl font-bold text-foreground mb-2">
-          {viewType === "monthly" ? "Monthly" : viewType === "weekly" ? "Weekly" : "Daily"} Financial Breakdown
+          Monthly Financial Breakdown - 2024
         </h2>
         <p className="text-muted-foreground text-sm">
-          Financial impact of your energy usage and production
+          Financial impact of your energy usage and production throughout the year
         </p>
       </div>
       
@@ -98,30 +104,27 @@ export const FinancialBreakdownChart = ({ data, viewType }: FinancialBreakdownCh
           />
           <ReferenceLine y={0} stroke="hsl(var(--foreground))" strokeWidth={1} />
           
-          {/* Loss (not injecting) - Bordeaux bars below zero */}
+          {/* Loss (not injecting) - Bordeaux bars */}
           <Bar
             dataKey="loss"
             fill="hsl(0, 63%, 31%)"
             name="Loss (not injecting)"
-            stackId="stack"
             radius={[8, 8, 0, 0]}
           />
           
-          {/* Gain (not drawing + stored value) - Blue bars above zero */}
+          {/* Gain (not drawing + stored value) - Blue bars */}
           <Bar
             dataKey="gain"
             fill="hsl(217, 91%, 60%)"
             name="Gain (not drawing + stored value)"
-            stackId="stack"
             radius={[8, 8, 0, 0]}
           />
           
-          {/* Monthly fee - Orange bars below zero */}
+          {/* Monthly fee - Orange bars */}
           <Bar
             dataKey="monthlyFee"
             fill="hsl(25, 95%, 53%)"
             name="Monthly fee"
-            stackId="stack"
             radius={[8, 8, 0, 0]}
           />
           
