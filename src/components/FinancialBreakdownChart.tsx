@@ -81,7 +81,7 @@ export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) 
   }, [monthsToShow]);
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-card rounded-lg shadow-sm p-6 border border-border/50">
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
