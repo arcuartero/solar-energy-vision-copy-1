@@ -14,14 +14,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
 
 const Index = () => {
   const [viewType, setViewType] = useState<"daily" | "weekly" | "monthly" | "custom">("daily");
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
-    from: undefined,
-    to: undefined,
+    from: subDays(new Date(), 365),
+    to: new Date(),
   });
   
   // Generate connected data based on view type
