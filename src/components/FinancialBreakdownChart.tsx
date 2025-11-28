@@ -11,7 +11,6 @@ import {
   ReferenceLine,
 } from "recharts";
 import { EnergyData } from "@/utils/energyData";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { loadFinancialData, FinancialDataRow } from "@/utils/loadFinancialData";
 
 interface FinancialBreakdownChartProps {
@@ -35,7 +34,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) => {
-  const [monthsToShow, setMonthsToShow] = useState<3 | 6 | 12>(12);
+  const [monthsToShow] = useState<3 | 6 | 12>(12);
   const [rawData, setRawData] = useState<FinancialDataRow[]>([]);
   
   const monthlyFee = -10; // Fixed monthly fee per month
@@ -79,26 +78,13 @@ export const FinancialBreakdownChart = ({ data }: FinancialBreakdownChartProps) 
   return (
     <div className="w-full bg-card rounded-lg shadow-sm p-6 border border-border/50">
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-xl font-bold text-foreground mb-2">
-              Monthly Financial Breakdown - Last {monthsToShow} Months
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              Financial impact of your energy usage and production throughout the year
-            </p>
-          </div>
-          <ToggleGroup type="single" value={monthsToShow.toString()} onValueChange={(value) => value && setMonthsToShow(Number(value) as 3 | 6 | 12)}>
-            <ToggleGroupItem value="3" aria-label="Last 3 months">
-              3 months
-            </ToggleGroupItem>
-            <ToggleGroupItem value="6" aria-label="Last 6 months">
-              6 months
-            </ToggleGroupItem>
-            <ToggleGroupItem value="12" aria-label="Last 12 months">
-              12 months
-            </ToggleGroupItem>
-          </ToggleGroup>
+        <div className="mb-4">
+          <h2 className="text-xl font-bold text-foreground mb-2">
+            Monthly Financial Breakdown - Last {monthsToShow} Months
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            Financial impact of your energy usage and production throughout the year
+          </p>
         </div>
       </div>
       
