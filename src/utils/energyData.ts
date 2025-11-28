@@ -1,11 +1,11 @@
-export type ViewType = "daily" | "weekly" | "monthly";
+export type ViewType = "daily" | "weekly" | "monthly" | "custom";
 
 // Generate connected energy data where stored energy is calculated from excess production/consumption
 export const generateEnergyData = (viewType: ViewType = "daily") => {
   // Scale initial stored energy based on view type
-  let storedEnergy = viewType === "daily" ? 5 : viewType === "weekly" ? 50 : 200;
+  let storedEnergy = viewType === "daily" || viewType === "custom" ? 5 : viewType === "weekly" ? 50 : 200;
 
-  if (viewType === "daily") {
+  if (viewType === "daily" || viewType === "custom") {
     // Original hourly data for a day (24 hours)
     const hours = Array.from({ length: 24 }, (_, i) => i);
     const chargingHour = Math.floor(Math.random() * 3) + 9; // Random hour between 9-11

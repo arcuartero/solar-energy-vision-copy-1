@@ -10,9 +10,19 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const Index = () => {
-  const [viewType, setViewType] = useState<"daily" | "weekly" | "monthly">("daily");
+  const [viewType, setViewType] = useState<"daily" | "weekly" | "monthly" | "custom">("daily");
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined,
+  });
   
   // Generate connected data based on view type
   const energyData = useMemo(() => generateEnergyData(viewType), [viewType]);
@@ -33,7 +43,7 @@ const Index = () => {
         {/* Main Card Container */}
         <div className="bg-card rounded-lg shadow-sm p-8 border border-border/30">
           {/* Date Picker */}
-          <div className="flex justify-end mb-6">
+          <div className="flex justify-end mb-6 gap-3">
             <ToggleGroup type="single" value={viewType} onValueChange={(value) => value && setViewType(value as any)}>
               <ToggleGroupItem value="daily" aria-label="Daily view" className="px-6">
                 Daily
@@ -45,6 +55,47 @@ const Index = () => {
                 Monthly
               </ToggleGroupItem>
             </ToggleGroup>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "px-6 justify-start text-left font-normal",
+                    !dateRange.from && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateRange.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, "LLL dd, y")} -{" "}
+                        {format(dateRange.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(dateRange.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Custom range</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="range"
+                  selected={dateRange}
+                  onSelect={(range) => {
+                    setDateRange({ from: range?.from, to: range?.to });
+                    if (range?.from && range?.to) {
+                      setViewType("custom");
+                    }
+                  }}
+                  numberOfMonths={2}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           {/* Main Grid Layout */}
