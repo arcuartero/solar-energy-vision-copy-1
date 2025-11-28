@@ -21,7 +21,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export const VirtualBatteryChart = ({ data }: VirtualBatteryChartProps) => {
   return (
-    <div className="bg-card rounded-lg shadow-sm p-6 border border-border/50 space-y-4">
+    <div className="space-y-4">
       <div>
         <h3 className="text-lg font-semibold text-foreground">Virtual Battery Energy Stored</h3>
         <p className="text-sm text-muted-foreground">Energy stored based on excess production/consumption</p>
