@@ -48,18 +48,15 @@ const Index = () => {
         {/* Main Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Charts */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Excess Production/Consumption Card */}
-            <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
+          <div className="lg:col-span-2">
+            {/* Combined Charts Card */}
+            <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50 space-y-8">
               <EnergyExcessChart 
                 data={energyData} 
                 showPublicCharging={showPublicCharging}
                 setShowPublicCharging={setShowPublicCharging}
               />
-            </div>
-
-            {/* Virtual Battery Card */}
-            <div className="bg-card rounded-xl shadow-[var(--shadow-card)] p-6 border border-border/50">
+              
               <VirtualBatteryChart 
                 data={energyData} 
                 showPublicCharging={showPublicCharging}
